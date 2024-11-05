@@ -1,0 +1,38 @@
+
+
+{% block title %}{% endblock %}
+
+{% block body %}
+
+    <h1>Detail de la Sortie {{ sortie.id }}</h1>
+
+    <table>
+
+        <tr>
+
+            <li>{{ sortie.nom}}</li>
+            <li>{{ sortie.infosSortie }}</li>
+
+
+            {% for site in sortie.site %}
+                <li>{{ site.nom }}</li>
+            {% endfor %}
+
+
+            {% for user in sortie.participants %}
+                <li>{{ user.nom }}</li>
+                <li>{{ user.prenom }}</li>
+            {% endfor %}
+
+
+
+
+        </tr>
+
+
+    </table>
+
+{#    <a  href="{{ path('wish_update', {'id' : wish.id }) }}">Editer</a>#}
+{#    <a  href="{{ path('wish_delete', {'id' : wish.id, 'token' : csrf_token('delete'~wish.id) }) }}" onclick="return confirm('Etes vous sûrs ??');">Delete</a>#}
+{#    <a  href="{{ path('commentaire_create', {'idWish' : wish.id}) }}">Ajouter un Commentaire</a>#}
+{% endblock %}
