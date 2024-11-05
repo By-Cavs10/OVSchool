@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b336e93e-0add-4ff2-abbe-c27a4e360e6b" name="Changes" comment="Preparation Entity + Tailwind">
-      <change beforePath="$PROJECT_DIR$/.idea/OVSchool.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/OVSchool.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/phpspec.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/phpspec.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/styles/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/styles/app.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migrations/Version20241104185423.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controller/SortieController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/sortie/index.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,9 +34,16 @@
     <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
   </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/By-Cavs10/OVSchool.git",
+    "accountId": "5d387834-b393-46fe-ba6d-fbf3b771c527"
+  }
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/symfony/cache" />
@@ -311,7 +318,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Merging main",
     "last_opened_file_path": "D:/WS_Symfony/OVSchool",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
