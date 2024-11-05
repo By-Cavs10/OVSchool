@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -17,18 +18,26 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: "La date et l'heure de début doivent être spécifiées.")]
+    #[Assert\GreaterThan('today', message: "La date et l'heure de début doivent être postérieures à aujourd'hui et maintenant.")]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrNull(message: "La durée doit être un nombre positif ou nul.")]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: "La date limite d'inscription doit être spécifiée.")]
+    #[Assert\LessThan(propertyPath: "dateHeureDebut", message: "La date limite d'inscription doit être antérieure à la date effective de la sortie.")]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "Le nombre maximum d'inscriptions doit être spécifié.")]
+    #[Assert\Positive(message: "Le nombre maximum d'inscriptions doit être un nombre positif.")]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -53,6 +62,7 @@ class Sortie
     private Collection $participants;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(message: "L'URL '{{ value }}' n'est pas une URL valide.")]
     private ?string $urlPhoto = null;
 
     public function __construct()

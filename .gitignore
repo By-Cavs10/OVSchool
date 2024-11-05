@@ -8,8 +8,7 @@
 /var/
 /vendor/
 /node_modules/
-/.idea/
-/.cache/
+
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
@@ -17,12 +16,14 @@
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
-
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/
+/public/build/
 ###< symfony/asset-mapper ###
+
+# Ignorer cache de Tailwind
+/.cache/
+
+# Ignorer les fichiers de configuration et de cache spécifiques à PhpStorm
+/.idea/

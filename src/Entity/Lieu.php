@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use App\Repository\LieuRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LieuRepository::class)]
+#[ORM\UniqueConstraint(columns:['nom', 'ville_id'])]
+#[UniqueEntity(fields: ['nom', 'ville'], message: "Un Lieu avec le même nom de la même Ville existe déjà en BDD.")]
 class Lieu
 {
     #[ORM\Id]
@@ -14,19 +17,44 @@ class Lieu
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "Veuillez saisir un nom.")]
+    #[Assert\Length(min: 3, max: 30, minMessage: 'Ce nom de Ville est trop court: il doit faire au moins {{ limit }} caractères.', maxMessage: 'Ce nom de Ville est trop long: il doit faire au plus {{ limit }} caractères')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 30, nullable: true)]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le nom de la rue ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $rue = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Range(
+        min: -90,
+        max: 90,
+        notInRangeMessage: "La latitude doit être comprise entre -90 et 90 degrés."
+    )]
+    #[Assert\Regex(
+        pattern: "/^-?\d+(\.\d{1,7})?$/",
+        message: "La latitude doit être un nombre décimal avec jusqu'à 7 chiffres après la virgule."
+    )]
     private ?float $latitude = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Range(
+        min: -180,
+        max: 180,
+        notInRangeMessage: "La longitude doit être comprise entre -180 et 180 degrés."
+    )]
+    #[Assert\Regex(
+        pattern: "/^-?\d+(\.\d{1,7})?$/",
+        message: "La longitude doit être un nombre décimal avec jusqu'à 7 chiffres après la virgule."
+    )]
     private ?float $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'lieux')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(message: "Veuillez saisir une ville.")]
     private ?Ville $ville = null;
 
     public function getId(): ?int
