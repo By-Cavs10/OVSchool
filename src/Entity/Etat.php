@@ -6,8 +6,11 @@ use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
+#[ORM\UniqueConstraint(columns:['libelle'])]
+#[UniqueEntity(fields: ['libelle'], message: "Un État avec le même libéllé existe déjà en BDD.")]
 class Etat
 {
     #[ORM\Id]
@@ -16,6 +19,8 @@ class Etat
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "Veuillez saisir un libéllé.")]
+    #[Assert\Length(min: 3, max: 30, minMessage: 'Ce libéllé d\'État est trop court: il doit faire au moins {{ limit }} caractères.', maxMessage: 'Ce libéllé d\'État est trop long: il doit faire au plus {{ limit }} caractères')]
     private ?string $libelle = null;
 
     /**
