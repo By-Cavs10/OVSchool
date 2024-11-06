@@ -17,7 +17,7 @@ class SortieController extends AbstractController
     #[Route('/list', name: '_list')]
     public function list(SortieRepository $sortieRepository): Response
     {
-        $sorties = $sortieRepository->findBy(['etat' => true], ['dateLimiteInscription' => 'DESC']);
+        $sorties = $sortieRepository->findAll(['etat' => true], ['dateLimiteInscription' => 'DESC']);
         return $this->render('sortie/index.html.twig', [
             'sorties' => $sorties
         ]);

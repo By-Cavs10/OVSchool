@@ -65,6 +65,9 @@ class Sortie
     #[Assert\Url(message: "L'URL '{{ value }}' n'est pas une URL valide.")]
     private ?string $urlPhoto = null;
 
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    private ?Lieu $lieu = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -215,6 +218,18 @@ class Sortie
     public function setUrlPhoto(?string $urlPhoto): static
     {
         $this->urlPhoto = $urlPhoto;
+
+        return $this;
+    }
+
+    public function getLieu(): ?Lieu
+    {
+        return $this->lieu;
+    }
+
+    public function setLieu(?Lieu $lieu): static
+    {
+        $this->lieu = $lieu;
 
         return $this;
     }

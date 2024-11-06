@@ -5,16 +5,13 @@
 {% block body %}
 <h1>Liste des Sorties</h1>
 
-<table >
-    {% for sortie in sorties %}
-    <tr>
-        {#                <td>{{ wish.dateCreated|date('d/m/y H:i') }}</td>#}
-        <td><a href="{{ path('sortie_detail',{'id':sortie.id })}}">{{ sortie.nom }}</a></td>
-        <td {{ sortie.dateHeureDebut |date('Y-m-d H:i:s')  }} {{ sortie.dateLimiteInscription |date('Y-m-d H:i:s')  }} ></td>
-
-    </tr>
-
-
-    {% endfor %}
-</table>
+    <table>
+        {% for sortie in sorties %}
+            <tr>
+                <td><a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a></td>
+                <td>Le {{ sortie.dateHeureDebut | date('d-m-Y') }} à {{ sortie.dateHeureDebut | date('h:i') }}</td>
+                <td>Inscription jusqu'au {{ sortie.dateLimiteInscription | date('d-m-y') }} à {{ sortie.dateLimiteInscription | date('h:i') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
