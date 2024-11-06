@@ -13,6 +13,8 @@
             <li>{{ sortie.nom}}</li>
             <li>{{ sortie.infosSortie }}</li>
 
+            <p>Chemin de l'image : {{ sortie.urlPhoto }}</p>
+            <img src="{{ asset('upload/sorties/'~sortie.urlPhoto) }}" width="300px" loading="lazy" alt="{{ sortie.nom }}"/>
 
             {% for site in sortie.site %}
                 <li>{{ site.nom }}</li>
