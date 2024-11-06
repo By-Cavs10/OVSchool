@@ -10,4 +10,30 @@
             {{ form(form) }}
         </div>
     </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+
+    <script>
+        function initAutocomplete() {
+            const input = document.getElementById('sortie_adresse'); // Ton champ adresse
+            const options = {
+                types: ['geocode'],
+                componentRestrictions: { country: 'fr' }  // Limiter aux adresses françaises, si nécessaire
+            };
+
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+            autocomplete.setFields(['address_components', 'geometry']);  // On récupère les coordonnées géographiques
+
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+
+                if (place.geometry) {
+                    // Remplir les champs latitude et longitude avec les coordonnées
+                    document.getElementById('sortie_latitude').value = place.geometry.location.lat();
+                    document.getElementById('sortie_longitude').value = place.geometry.location.lng();
+                }
+            });
+        }
+    </script>
+
 {% endblock %}
