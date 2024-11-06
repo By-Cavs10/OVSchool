@@ -6,8 +6,12 @@ use App\Repository\SiteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SiteRepository::class)]
+#[ORM\UniqueConstraint(columns:['nom'])]
+#[UniqueEntity(fields: ['nom'], message: "Un Site avec le même nom existe déjà en BDD.")]
 class Site
 {
     #[ORM\Id]
@@ -16,6 +20,8 @@ class Site
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "Veuillez saisir un nom.")]
+    #[Assert\Length(min: 3, max: 30, minMessage: 'Ce nom de site est trop court: il doit faire au moins {{ limit }} caractères.', maxMessage: 'Ce nom de site est trop long: il doit faire au plus {{ limit }} caractères')]
     private ?string $nom = null;
 
     /**
