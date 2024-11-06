@@ -16,15 +16,31 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
+            entry_point: App\Security\AppAuthenticator
+            custom_authenticator: App\Security\AppAuthenticator
+
+#            form_login:
+#                login_path: app_login
+#                check_path: app_login
+#                enable_csrf: true
+
             logout:
                 path: app_logout
-                # where to redirect after logout
-                target: app_main
+                target: app_home
+                invalidate_session: true # Invalide la session de l'utilisateur lors du logout
+                delete_cookies:
+                    OVSCHOOL_REMEMBERME: []
 
+            remember_me:
+                secret: '%kernel.secret%'  # Utilise la clé secrète de l'application
+                lifetime: 604800  # Durée de la session en secondes (7 jours ici)
+                path: /  # Chemin sur lequel le cookie est valide: / désigne la racine et donc toute l'application
+                name: OVSCHOOL_REMEMBERME # Nom spécifique au contexte
+                secure: true                  # Seulement pour les connexions HTTPS
+                httponly: true               # Rend le cookie inaccessible depuis JavaScript > sécurité contre les attaques XSS
+
+
+            #custom_authenticator: App\Security\Authentification
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
