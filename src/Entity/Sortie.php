@@ -68,6 +68,9 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     private ?Lieu $lieu = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateDebutInscription = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -230,6 +233,18 @@ class Sortie
     public function setLieu(?Lieu $lieu): static
     {
         $this->lieu = $lieu;
+
+        return $this;
+    }
+
+    public function getDateDebutInscription(): ?\DateTimeInterface
+    {
+        return $this->dateDebutInscription;
+    }
+
+    public function setDateDebutInscription(?\DateTimeInterface $dateDebutInscription): static
+    {
+        $this->dateDebutInscription = $dateDebutInscription;
 
         return $this;
     }

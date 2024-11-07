@@ -13,7 +13,7 @@
             <li>{{ sortie.nom}}</li>
             <li>{{ sortie.infosSortie }}</li>
 
-            <p>Chemin de l'image : {{ sortie.urlPhoto }}</p>
+
             <img src="{{ asset('upload/sorties/'~sortie.urlPhoto) }}" width="300px" loading="lazy" alt="{{ sortie.nom }}"/>
 
             {% for site in sortie.site %}
@@ -34,7 +34,33 @@
 
     </table>
 
+    <!-- Carte Google Maps -->
+    <div id="map" style="height: 400px; width: 100%;"></div>
+
 {#    <a  href="{{ path('wish_update', {'id' : wish.id }) }}">Editer</a>#}
 {#    <a  href="{{ path('wish_delete', {'id' : wish.id, 'token' : csrf_token('delete'~wish.id) }) }}" onclick="return confirm('Etes vous sûrs ??');">Delete</a>#}
 {#    <a  href="{{ path('commentaire_create', {'idWish' : wish.id}) }}">Ajouter un Commentaire</a>#}
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+<script>
+    function initMap() {
+        let latitude = {{ latitude }};
+        let longitude = {{ longitude }};
+
+
+        let map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,  // Niveau de zoom (ajustez selon vos besoins)
+            center: { lat: latitude, lng: longitude }  // Centrer la carte sur la sortie
+        });
+
+
+        let marker = new google.maps.Marker({
+            position: { lat: latitude, lng: longitude },
+            map: map,
+            title: "Lieu de la sortie"
+        });
+    }
+</script>
 {% endblock %}
