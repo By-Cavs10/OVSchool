@@ -5,17 +5,15 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
+        email_or_pseudo_provider:
+            id: App\Security\EmailOrPseudoUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: app_user_provider
+            provider: email_or_pseudo_provider
             entry_point: App\Security\AppAuthenticator
             custom_authenticator: App\Security\AppAuthenticator
 
@@ -38,7 +36,6 @@ security:
                 name: OVSCHOOL_REMEMBERME # Nom spécifique au contexte
                 secure: true                  # Seulement pour les connexions HTTPS
                 httponly: true               # Rend le cookie inaccessible depuis JavaScript > sécurité contre les attaques XSS
-
 
             #custom_authenticator: App\Security\Authentification
             # activate different ways to authenticate

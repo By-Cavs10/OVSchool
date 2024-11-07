@@ -12,7 +12,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
 #[UniqueEntity(fields: ['email'], message: "Un utilisateur avec cet email existe déjà en BDD.")]
+#[UniqueEntity(fields: ['pseudo'], message: "Un utilisateur avec ce pseudo existe déjà en BDD.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -29,46 +31,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Assert\NotBlank(message: "Vous devez sélectionner un rôle.")]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank(message: "Le mot de passe ne peut pas être vide.")]
-    #[Assert\Length(
-        min: 6,
-        minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères."
-    )]
     private ?string $password = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, unique: true)]
     #[Assert\NotBlank(message: "Le pseudo ne peut pas être vide.")]
+    #[Assert\Length(max: 30, maxMessage: "Votre pseudo ne doit pas dépasser {{ limit }} caractères.")]
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
+    #[Assert\Length(max: 30, maxMessage: "Votre nom ne doit pas dépasser {{ limit }} caractères.")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank(message: "Le prénom ne peut pas être vide.")]
+    #[Assert\Length(max: 30, maxMessage: "Votre prénom ne doit pas dépasser {{ limit }} caractères.")]
     private ?string $prenom = null;
 
     #[ORM\Column]
-    #[Assert\NotNull(message: "Le statut administrateur doit être spécifié.")]
     private ?bool $administrateur = null;
 
     #[ORM\Column(length: 15, nullable: true)]
     #[Assert\Length(max: 10, maxMessage: "Le numéro de téléphone ne peut pas dépasser {{ limit }} caractères.")]
     #[Assert\Regex(
-        pattern: "/^\d+$/",
-        message: "Le numéro de téléphone doit contenir uniquement des chiffres."
+        pattern: "/^[0-9]{10}$/",
+        message: "Le numéro de téléphone doit contenir exactement 10 chiffres."
     )]
     private ?string $telephone = null;
 
     #[ORM\Column]
-    #[Assert\NotNull(message: "Le statut actif doit être spécifié.")]
     private ?bool $actif = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
@@ -76,7 +73,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Site $site = null;
 
     #[ORM\Column(length: 250, nullable: true)]
-    #[Assert\Url(message: "L'URL '{{ value }}' n'est pas une URL valide.")]
     private ?string $urlPhoto = null;
 
     public function getId(): ?int

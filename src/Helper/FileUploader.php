@@ -15,7 +15,7 @@ public function uploadPhoto(UploadedFile $file, string $name, string $chemin): s
 {
 
 $dir = $this->parameterBag->get($chemin);
-$name = $this->slugger->slug($name) . '-' . uniqid() . '.' . $file->guessExtension();
+$name = $this->slugger->slug(strtolower($name)) . '-' . uniqid() . '.' . $file->guessExtension();
 $file->move($dir, $name);
 
 return $name;

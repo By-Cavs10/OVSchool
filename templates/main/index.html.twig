@@ -1,19 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MainController!{% endblock %}
+{% block title %}{{ parent() }} Accueil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-</style>
 
 <div class="example-wrapper bg-blue-500">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/WS_Symfony/OVSchool/src/Controller/MainController.php</code></li>
-        <li>Your template at <code>D:/WS_Symfony/OVSchool/templates/main/index.html.twig</code></li>
-    </ul>
+    <h1>Bienvenue
+        {% if app.user %}
+            {{ app.user.pseudo|capitalize }}
+        {% else %}
+            à vous
+        {% endif %}
+        !
+    </h1>
 </div>
 {% endblock %}

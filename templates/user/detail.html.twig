@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Profil de l'utilisateur "{{ user.pseudo }}" {% endblock %}
+
+{% block body %}
+    <h1> Profil de l'utilisateur "{{ user.pseudo }}" </h1>
+    <div>
+        <div>
+            <img src="{{ asset('upload/users/'~user.urlPhoto) }}" loading="lazy" alt=" Photo de profil de {{ user.nom }} {{ user.prenom }}" />
+        </div>
+        <div>
+            <p>Campus: {{ user.site.nom|default("Non renseigné(e)")  }}</p>
+            <p>Nom : {{ user.nom|default("Non renseigné(e)")  }}</p>
+            <p>Prénom : {{ user.prenom|default("Non renseigné(e)")  }}</p>
+            <p>Pseudo : {{ user.pseudo|default("Non renseigné(e)")  }}</p>
+            <p>Email : {{ user.email|default("Non renseigné(e)")  }}</p>
+            <p>Téléphone : {{ user.telephone| slice(0, 2) ~ '-' ~ user.telephone | slice(2, 2) ~ '-' ~ user.telephone | slice(4, 2) ~ '-' ~ user.telephone | slice(6, 2) ~ '-' ~ user.telephone | slice(8, 2)|default("Non renseigné(e)")}}</p>
+            <p>Rôles :
+                {% for role in user.roles %}
+                    {{ role }}
+                {%  else %}
+                    Rôle(s) non renseigné(s)
+                {%  endfor %}
+            <p>Statut Administrateur :
+                {% if user.administrateur %}
+                    Oui
+                {% else %}
+                    Non
+                {% endif %}
+            </p>
+            <p>État du compte :
+                {% if user.actif %}
+                    Activé
+                {% else %}
+                    Désactivé
+                {% endif %}
+            </p>
+
+        </div>
+    </div>
+    <div>
+        <a class="" href="{{ path('user_list') }}" title="Liste des Utilisateurs">Retour à la liste</a>
+        <a class="" href="{{ path('user_update', {'id': user.id}) }}" title="Modifier l'Utilisateur">Modifier le profil</a>
+        <a class="" href="{{ path('user_delete', {'id': user.id, 'token': csrf_token('delete'~user.id)}) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')" title="Supprimer l'Utilisateur">Supprimer le profil</a>
+    </div>
+
+{% endblock %}

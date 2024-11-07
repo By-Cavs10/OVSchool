@@ -54,7 +54,7 @@ class SortieController extends AbstractController
 
             if ($file instanceof UploadedFile) {
                 $name = $fileUploader->uploadPhoto($file, $sortie->getNom(), 'upload_directory_sorties');
-                $sortie->setUrlPhoto($name);
+                $sortie->setUrlPhoto(strtolower($name));
             }
 
             $em->persist($sortie);
