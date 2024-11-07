@@ -27,7 +27,7 @@ class Sortie
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\PositiveOrNull(message: "La durée doit être un nombre positif ou nul.")]
+    #[Assert\Positive(message: "La durée doit être un nombre positif.")]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -67,6 +67,9 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     private ?Lieu $lieu = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateDebutInscription = null;
 
     public function __construct()
     {
@@ -230,6 +233,18 @@ class Sortie
     public function setLieu(?Lieu $lieu): static
     {
         $this->lieu = $lieu;
+
+        return $this;
+    }
+
+    public function getDateDebutInscription(): ?\DateTimeInterface
+    {
+        return $this->dateDebutInscription;
+    }
+
+    public function setDateDebutInscription(?\DateTimeInterface $dateDebutInscription): static
+    {
+        $this->dateDebutInscription = $dateDebutInscription;
 
         return $this;
     }

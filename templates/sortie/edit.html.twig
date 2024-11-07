@@ -5,35 +5,139 @@
 {% block title %}{{ parent() }} :: Edition{% endblock %}
 
 {% block body %}
-    <div >
-        <div>
-            {{ form(form) }}
+    <div>
+        <!-- Formulaire complet avec tous les champs personnalisés -->
+        {{ form_start(form) }}
+
+        <!-- Affichage de l'option d'inscription (Maintenant ou Plus tard) -->
+
+
+        <!-- Autres champs -->
+        <div id="form-other-fields">
+            {{ form_row(form.nom) }}
+            {{ form_row(form.adresse) }}
+            {{ form_row(form.latitude) }}
+            {{ form_row(form.longitude) }}
+            {{ form_row(form.nomLieu) }}
+            {{ form_row(form.rue) }}
+            {{ form_row(form.nomVille) }}
+            {{ form_row(form.codePostal) }}
+
+            {{ form_row(form.dateHeureDebut) }}
+            {{ form_row(form.duree) }}
+            {{ form_row(form.dateLimiteInscription) }}
+            {{ form_row(form.nbInscriptionsMax) }}
+            {{ form_row(form.infosSortie) }}
+            {{ form_row(form.urlPhoto) }}
+            {{ form_row(form.site) }}
+            {{ form_row(form.organisateur) }}
+            {{ form_row(form.participants) }}
         </div>
+
+        <div class="form-group">
+            {{ form_row(form.inscriptionOption) }}
+        </div>
+
+        <!-- Champ de date début d'inscription, masqué par défaut -->
+        <div id="dateDebutInscriptionField" style="display: none;">
+            {{ form_row(form.dateDebutInscription) }}
+        </div>
+
+        <!-- Soumettre le formulaire -->
+        <div class="form-group">
+            {{ form_row(form.submit) }}
+        </div>
+
+        {{ form_end(form) }}
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+
+{% endblock %}
+{% block javascripts %}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete" async defer></script>
 
     <script>
         function initAutocomplete() {
-            const input = document.getElementById('sortie_adresse'); // Ton champ adresse
+            const input = document.getElementById('sortie_adresse');
             const options = {
-                types: ['geocode'],
-                componentRestrictions: { country: 'fr' }  // Limiter aux adresses françaises, si nécessaire
+                types: ['establishment'],
+                componentRestrictions: { country: 'fr' }
             };
 
             const autocomplete = new google.maps.places.Autocomplete(input, options);
-            autocomplete.setFields(['address_components', 'geometry']);  // On récupère les coordonnées géographiques
+            autocomplete.setFields(['address_components', 'geometry']);
 
             autocomplete.addListener('place_changed', function() {
                 const place = autocomplete.getPlace();
 
                 if (place.geometry) {
-                    // Remplir les champs latitude et longitude avec les coordonnées
+
                     document.getElementById('sortie_latitude').value = place.geometry.location.lat();
                     document.getElementById('sortie_longitude').value = place.geometry.location.lng();
                 }
+
+
+                if (place.name) {
+                    document.getElementById('sortie_nomLieu').value = place.name;
+                }
+
+                // Remplir la rue
+                let streetAddress = '';
+                for (let i = 0; i < place.address_components.length; i++) {
+                    const component = place.address_components[i];
+                    if (component.types.includes('route')) {
+                        streetAddress = component.long_name;
+                    }
+                }
+                document.getElementById('sortie_rue').value = streetAddress;
+
+                // Remplir le code postal
+                let postalCode = '';
+                for (let i = 0; i < place.address_components.length; i++) {
+                    const component = place.address_components[i];
+                    if (component.types.includes('postal_code')) {
+                        postalCode = component.long_name;
+                    }
+                }
+                document.getElementById('sortie_codePostal').value = postalCode;
+
+                // Remplir le nom de la ville
+                let cityName = '';
+                for (let i = 0; i < place.address_components.length; i++) {
+                    const component = place.address_components[i];
+                    if (component.types.includes('locality')) {  // Le type 'locality' correspond à la ville
+                        cityName = component.long_name;
+                    }
+                }
+                document.getElementById('sortie_nomVille').value = cityName;
             });
         }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateFieldWrapper = document.getElementById('dateDebutInscriptionField'); // Le wrapper du champ de date
+            const dateField = document.getElementById('sortie_dateDebutInscription'); // Le champ de date
+
+            function toggleDateField() {
+                const inscriptionOption = document.querySelector('input[name="sortie[inscriptionOption]"]:checked').value;
+
+                // Si "Maintenant", masquage du champ de date
+                if (inscriptionOption === 'now') {
+                    dateFieldWrapper.style.display = 'none';
+                    dateField.value = '';  // Réinitialise la valeur à null (ce sera géré par Symfony)
+                } else {
+                    dateFieldWrapper.style.display = 'block';
+                }
+            }
+
+            // Associer l'événement aux boutons radio
+            document.querySelectorAll('input[name="sortie[inscriptionOption]"]').forEach((input) => {
+                input.addEventListener('change', toggleDateField);
+            });
+
+            toggleDateField();  // Initialiser l'affichage, masquant la date par défaut pour "Maintenant"
+        });
     </script>
+
 
 {% endblock %}
