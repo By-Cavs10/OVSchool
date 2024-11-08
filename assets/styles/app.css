@@ -33,14 +33,5 @@ body {
     font-size: 3rem ;
 }
 
-/*.background {*/
-/*    !*background-image: url('../image/'); !* Chemin vers ton image *!*!*/
-/*    background-size: cover; !* Fait en sorte que l'image couvre tout le conteneur *!*/
-/*    background-position: center; !* Centre l'image dans le conteneur *!*/
-/*    background-repeat: no-repeat; !* Empêche la répétition de l'image *!*/
-/*    height: 300px; !* Ajuste la hauteur selon tes besoins *!*/
-/*    width: 100%; !* S'assure que le bandeau prend toute la largeur *!*/
-/*    justify-content: center;*/
 
-
-/*}*/
+{}
