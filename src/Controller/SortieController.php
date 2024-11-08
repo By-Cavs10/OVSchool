@@ -201,14 +201,32 @@ class SortieController extends AbstractController
         $etatId = $sortie->getEtat()->getId();
 
         if ($etatId !== 2 and $etatId !== 3) {
-            $flashMessage = match ($sortie->getEtat()->getId()){
-                1 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie n\'est pas publiée',
-                4 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie a déjà démarrée',
-                5 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie est terminée',
-                6 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie est terminée et archivée',
+            $flashMessage = match ($sortie->getEtat()->getId()) {
+                1 => 'Accès refusé à "' . $sortie->getNom() . '" - la Sortie n\'est pas publiée',
+                4 => 'Accès refusé à "' . $sortie->getNom() . '" - la Sortie a déjà démarrée',
+                5 => 'Accès refusé à "' . $sortie->getNom() . '" - la Sortie est terminée',
+                6 => 'Accès refusé à "' . $sortie->getNom() . '" - la Sortie est terminée et archivée',
                 default => 'Accès refusé - la Sortie est dans un état inconnu',
             };
+            $this->addFlash('danger', $flashMessage);
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
 
+        $user = $this->getUser();
+        $userId = null;
+
+        if($user){
+            $userId = $entityManager->getRepository(User::class)->find($user->getId())->getId();
+        }
+
+        if ($userId) {
+            $flashMessage = $sortieRepository->userUnsubscribe($sortie, $user);
+            $this->addFlash($flashMessage['label'], $flashMessage['message']);
+        } else {
+            $this->addFlash('danger', 'Désinscription impossible - cet Utilisateur n\'existe pas en BDD.');
+        }
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+    }
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
     public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
@@ -228,7 +246,8 @@ class SortieController extends AbstractController
             'sortie' => $sortie,
 
         ]);
-    }
+            }
+
 
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
@@ -263,25 +282,7 @@ class SortieController extends AbstractController
 
 
 
-            $this->addFlash('danger', $flashMessage);
-            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
-        }
 
-        $user = $this->getUser();
-        $userId = null;
-
-        if($user){
-            $userId = $entityManager->getRepository(User::class)->find($user->getId())->getId();
-        }
-
-        if ($userId) {
-            $flashMessage = $sortieRepository->userUnsubscribe($sortie, $user);
-            $this->addFlash($flashMessage['label'], $flashMessage['message']);
-        } else {
-            $this->addFlash('danger', 'Désinscription impossible - cet Utilisateur n\'existe pas en BDD.');
-        }
-        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
-    }
 
 }
 
