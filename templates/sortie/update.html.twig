@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}{{ parent() }} :: Edition{% endblock %}
+
+{% block body %}
+    <div>
+        <h2>{{ sortie.nom }}</h2>
+        <!-- Formulaire complet avec tous les champs personnalisés -->
+        {{ form_start(form) }}
+
+        <!-- Affichage de l'option d'inscription (Maintenant ou Plus tard) -->
+
+
+        <!-- Autres champs -->
+        <div id="form-other-fields">
+
+
+
+            {{ form_row(form.dateHeureDebut) }}
+            {{ form_row(form.duree) }}
+            {{ form_row(form.dateLimiteInscription) }}
+            {{ form_row(form.nbInscriptionsMax) }}
+            {{ form_row(form.infosSortie) }}
+            {{ form_row(form.urlPhoto) }}
+            {{ form_row(form.site) }}
+            {{ form_row(form.organisateur) }}
+            {{ form_row(form.participants) }}
+        </div>
+
+
+
+        <!-- Champ de date début d'inscription, masqué par défaut -->
+        <div id="dateDebutInscriptionField" data-date="{{ form.dateDebutInscription.vars.value|date('Y-m-d') }}" style="display: none;">
+        {{ form_row(form.dateDebutInscription) }}
+    </div>
+
+        <!-- Soumettre le formulaire -->
+        <div class="form-group">
+            {{ form_row(form.submit) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+
+{% endblock %}
+{% block javascripts %}
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const dateField = document.getElementById("dateDebutInscriptionField");
+            const dateValue = dateField.getAttribute("data-date");
+
+
+            if (dateValue) {
+                const dateInscription = new Date(dateValue);
+                const today = new Date();
+
+
+                today.setHours(0, 0, 0, 0);
+                dateInscription.setHours(0, 0, 0, 0);
+
+
+                if (dateInscription > today) {
+                    dateField.style.display = "block";
+                }
+            }
+        });
+    </script>
+
+
+{% endblock %}

@@ -8,11 +8,13 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Entity\Ville;
 use App\Form\SortieType;
+use App\Form\UpdateType;
 use App\Helper\FileUploader;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -207,6 +209,60 @@ class SortieController extends AbstractController
                 default => 'Accès refusé - la Sortie est dans un état inconnu',
             };
 
+
+    #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
+    public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
+    {
+        $form = $this->createForm(UpdateType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $em->flush();
+
+            $this->addFlash('success', 'La sortie a été modifiée avec succès !');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        return $this->render('sortie/update.html.twig', [
+            'form' => $form,
+            'sortie' => $sortie,
+
+        ]);
+    }
+
+    #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
+    public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$sortie->getId(), $request->get('token'))) {
+            $em->remove($sortie);
+            $em->flush();
+
+            $this->addFlash('success', 'La sortie a été supprimée');
+        } else {
+            $this->addFlash('danger', 'Pas possible de supprimer! ');
+        }
+        return $this->redirectToRoute('sortie_list');
+
+    }
+
+    #[Route('/cancel-delete/{id}', name: '_cancel_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function cancelDelete(Sortie $sortie, EntityManagerInterface $em): JsonResponse
+    {
+
+
+        // Change l'état de la sortie à 6
+        $etat = $em->getRepository(Etat::class)->find(6);
+        $sortie->setEtat($etat);
+        $em->persist($sortie);
+        $em->flush();
+
+
+
+        return new JsonResponse(['success' => true]);
+    }
+
+
+
             $this->addFlash('danger', $flashMessage);
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
@@ -226,6 +282,7 @@ class SortieController extends AbstractController
         }
         return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
     }
+
 }
 
 

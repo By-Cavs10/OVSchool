@@ -43,7 +43,24 @@
     <!-- Carte Google Maps -->
     <div id="map" style="height: 400px; width: 100%;"></div>
 
-{#    <a  href="{{ path('wish_update', {'id' : wish.id }) }}">Editer</a>#}
+    <a  href="{{ path('sortie_update', {'id' : sortie.id }) }}">Editer</a>
+    <form id="deleteForm" action="{{ path('sortie_delete', {id: sortie.id}) }}" method="post">
+        <input type="hidden" name="token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+        <!-- Bouton principal pour afficher la boîte modale -->
+        <button type="button" class="btn btn-danger" onclick="openModal()">Autres</button>
+    </form>
+
+    <!-- Boîte modale -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3>Que souhaitez-vous faire ?</h3>
+            <div id="confirmationButtons" style="display: none;">
+                <button onclick="confirmDeletion()">Supprimer</button>
+                <button onclick="cancelSortie()">Annuler</button>
+                <button onclick="closeModal()">Revenir en arrière</button>
+            </div>
+        </div>
+    </div>
 {#    <a  href="{{ path('wish_delete', {'id' : wish.id, 'token' : csrf_token('delete'~wish.id) }) }}" onclick="return confirm('Etes vous sûrs ??');">Delete</a>#}
 {#    <a  href="{{ path('commentaire_create', {'idWish' : wish.id}) }}">Ajouter un Commentaire</a>#}
 {% endblock %}
@@ -67,6 +84,47 @@
             map: map,
             title: "Lieu de la sortie"
         });
+    }
+
+    // Fonction pour ouvrir la boîte modale et afficher les boutons
+    function openModal() {
+        document.getElementById('confirmationModal').style.display = 'flex';
+        // Afficher les boutons uniquement lorsque la modale s'ouvre
+        setTimeout(() => {
+            document.getElementById('confirmationButtons').style.display = 'block';
+        }, 300); // Délai pour une meilleure UX
+    }
+
+    // Fonction pour fermer la boîte modale
+    function closeModal() {
+        document.getElementById('confirmationModal').style.display = 'none';
+        document.getElementById('confirmationButtons').style.display = 'none';
+    }
+
+    // Fonction pour confirmer la suppression avec double confirmation
+    function confirmDeletion() {
+        if (confirm("Êtes-vous sûr de vouloir supprimer cette sortie ?")) {
+            document.getElementById('deleteForm').submit();
+        }
+    }
+
+    // Fonction pour annuler (changer l'état à 6)
+    async function cancelSortie() {
+        if (confirm("Êtes-vous sûr de vouloir annuler cette sortie ?")) {
+            try {
+                const response = await fetch(`{{ path('sortie_cancel_delete', {id: sortie.id}) }}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert("La sortie a été annulée avec succès.");
+                    window.location.reload(); // Recharge la page pour refléter les modifications
+                } else {
+                    alert("Erreur lors de l'annulation.");
+                }
+            } catch (error) {
+                console.error("Erreur:", error);
+            }
+        }
+        closeModal(); // Fermer la boîte modale après annulation
     }
 </script>
 {% endblock %}
