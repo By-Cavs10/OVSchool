@@ -25,4 +25,7 @@
             {{ registrationForm.vars.value.id is same as (null) ? 'Créér':'Modifier'}} un profil
         </button>
     {{ form_end(registrationForm) }}
+    {%  if registrationForm.vars.value.id %}
+        <a class="" href="{{ path('user_list') }}" title="Liste des Utilisateurs">Annuler</a>
+    {% endif %}
 {% endblock %}

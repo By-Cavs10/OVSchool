@@ -6,7 +6,8 @@ INSERT INTO `etat` (`id`, `libelle`) VALUES
                                          (3, 'Clôturée'),
                                          (4, 'En cours'),
                                          (5, 'Terminée'),
-                                         (6, 'Annulée');
+                                         (6, 'Annulée'),
+                                         (7, 'Archivée');
 
 
 

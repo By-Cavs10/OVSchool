@@ -6,6 +6,7 @@
 
     <h1>Detail de la Sortie {{ sortie.id }}</h1>
 
+    <a href="{{ path('sortie_list')}}">Retour à la liste des sorties</a>
     <table>
 
         <tr>
@@ -26,8 +27,13 @@
                 <li>{{ user.prenom }}</li>
             {% endfor %}
 
-
-
+            {% if sortie.etat.id == 2 %}
+                {% if sortie.participants.contains(app.user) %}
+                    <a href="{{ path('sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire de la sortie</a>
+                {% else %}
+                    <a href="{{ path('sortie_subscribe', {'id': sortie.id}) }}">S'inscrire à la sortie</a>
+                {% endif %}
+            {% endif %}
 
         </tr>
 
