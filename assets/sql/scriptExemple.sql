@@ -51,7 +51,10 @@ INSERT INTO `sortie` (`id`, `etat_id`, `site_id`, `organisateur_id`, `lieu_id`, 
                                                                                                                                                                                             (2, 2, 2, 2, 3,'Atelier de créativité', '2024-11-12 14:00:00', 90, '2024-11-10 17:00:00', 50, 'Un atelier pour stimuler votre créativité.', 'url_photo2.jpg'),
                                                                                                                                                                                             (3, 3, 3, 3, 5,'Festival de musique', '2024-11-15 20:00:00', 180, '2024-11-13 23:00:00', 300, 'Un festival avec plusieurs artistes.', 'url_photo3.jpg'),
                                                                                                                                                                                             (4, 4, 4, 4, 1,'Marché artisanal', '2024-11-20 10:00:00', 240, '2024-11-18 18:00:00', 150, 'Venez découvrir des produits locaux.', 'url_photo4.jpg'),
-                                                                                                                                                                                            (5, 5, 5, 5, 2,'Exposition d’art', '2024-11-25 11:00:00', 150, '2024-11-22 15:00:00', 200, 'Une exposition de talents émergents.', 'url_photo5.jpg');
+                                                                                                                                                                                            (5, 5, 5, 5, 2,'Exposition d’art', '2024-11-25 11:00:00', 150, '2024-11-22 15:00:00', 200, 'Une exposition de talents émergents.', 'url_photo5.jpg'),
+                                                                                                                                                                                            (6, 6, 5, 5, 2,'ECF', '2024-11-25 11:00:00',180, '2024-11-22 15:00:00', 11, 'Une exposition de talents émergents.', 'url_photo5.jpg'),
+                                                                                                                                                                                            (7, 7, 5, 5, 2,'Verre au bar', '2024-11-25 11:00:00', 120, '2024-11-22 15:00:00', 11, 'Une exposition de talents émergents.', 'url_photo5.jpg'),
+                                                                                                                                                                                            (8, 2, 5, 5, 2,'Vie solo', '2024-11-25 11:00:00', 666, '2024-11-22 15:00:00', 1, 'Une exposition de talents émergents.', 'url_photo5.jpg');
 
 
 
@@ -60,7 +63,8 @@ INSERT INTO `sortie_user` (`sortie_id`, `user_id`) VALUES
                                                        (1, 2),
                                                        (2, 1),
                                                        (2, 3),
-                                                       (3, 1);
+                                                       (3, 1),
+                                                       (8, 1);
 
 
 
