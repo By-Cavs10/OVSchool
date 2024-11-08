@@ -25,49 +25,14 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class SortieType extends AbstractType
+class UpdateType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom', TextType::class, [
-                'required' => true,
-            ])
-            ->add('adresse', TextType::class, [
-                'label' => 'Adresse',
-                'required' => true,
-                'mapped' => false,
-            ])
-            ->add('latitude', HiddenType::class, [
-                'mapped' => false,
-            ])
-            ->add('longitude', HiddenType::class, [
-                'mapped' => false,
-            ])
-            ->add('nomLieu', TextType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez saisir un lieu',]),
-                    new Length([
-                        'min' => 3,
-                        'minMessage' => 'Le lieu doit faire au minimum {{ limit }} caractères.',
-                        'maxMessage' => 'Le lieu doit faire au minimum {{ limit }} caractères.',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 30,
 
-                    ])
-                ],
-            ])
-            ->add('rue', TextType::class, [
-                'mapped' => false,
-            ])
-            ->add('nomVille', TextType::class, [
-                'mapped' => false,
-            ])
-            ->add('codePostal', TextType::class, [
-                'mapped' => false,
-            ])
+
+
 
 //            ->add('lieu', EntityType::class, [
 //                'class' => Lieu::class,
@@ -143,18 +108,7 @@ class SortieType extends AbstractType
                 'required' => false,
                 'label' => 'Date de début d\'inscription',
             ])
-            ->add('inscriptionOption', ChoiceType::class, [
-                'choices'  => [
-                    'Maintenant' => 'now',
-                    'Plus tard' => 'later',
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'mapped' => false,  // Ne pas mapper directement ce champ à l'entité
-                'label' => 'Ouverture des inscriptions',
-                'data' => 'now',
 
-            ])
 
             ->add('submit', SubmitType::class, [
                 'label' => 'OK'
