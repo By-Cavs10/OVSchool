@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\User;
 use App\Entity\Ville;
 use App\Form\SortieType;
 use App\Form\UpdateType;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use function Symfony\Component\String\s;
 
 #[Route('/sortie', name: 'sortie')]
 class SortieController extends AbstractController
@@ -25,7 +27,7 @@ class SortieController extends AbstractController
     public function list(SortieRepository $sortieRepository): Response
     {
         $sorties = $sortieRepository->findAll(['etat' => true], ['dateLimiteInscription' => 'DESC']);
-        return $this->render('sortie/index.html.twig', [
+        return $this->render('sortie/list.html.twig', [
             'sorties' => $sorties
         ]);
     }
@@ -33,8 +35,6 @@ class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
     public function detail(Sortie $sortie, Request $request): Response
     {
-
-
         if ($request->get('partial')) {
             return $this->render('sortie/detail_content.html.twig', [
                 'sortie' => $sortie,
@@ -143,6 +143,72 @@ class SortieController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/inscription', name: '_subscribe', requirements: ['id' => '\d+'])]
+    public function userSubscribe(Request $request, Sortie $sortie, EntityManagerInterface $entityManager, SortieRepository $sortieRepository): Response
+    {
+        $sortieId = $entityManager->getRepository(Sortie::class)->find($sortie->getId())->getId();
+
+        if (!$sortieId){
+            $this->addFlash('danger', 'Inscription impossible - cette Sortie n\'existe pas en BDD.');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        if ($sortie->getEtat()->getId() !== 2) {
+            $flashMessage = match ($sortie->getEtat()->getId()){
+              1 => 'Inscription impossible à "'.$sortie->getNom().'" - la Sortie n\'est pas publiée',
+              3 => 'Inscription impossible à "'.$sortie->getNom().'" - la date et/ou l\'heure limites d\'inscription à cette Sortie sont dépassées.',
+              4 => 'Inscription impossible à "'.$sortie->getNom().'" - la Sortie a déjà démarrée',
+              5 => 'Inscription impossible à "'.$sortie->getNom().'" - la Sortie est terminée',
+              6 => 'Inscription impossible à "'.$sortie->getNom().'" - la Sortie est terminée et archivée',
+              default => 'Inscription impossible - la Sortie est dans un état inconnu',
+            };
+
+            $this->addFlash('danger', $flashMessage);
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        if (count($sortie->getParticipants()) === $sortie->getNbInscriptionsMax()){
+            $this->addFlash('danger', 'Inscription impossible à "'.$sortie->getNom().'" - le nombre de participants maximum est atteint.');
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        $user = $this->getUser();
+        $userId = null;
+
+        if($user){
+            $userId = $entityManager->getRepository(User::class)->find($user->getId())->getId();
+        }
+
+        if ($userId) {
+            $flashMessage = $sortieRepository->userSubscribe($sortie, $user);
+            $this->addFlash($flashMessage['label'], $flashMessage['message']);
+        } else {
+            $this->addFlash('danger', 'Inscription impossible - cet Utilisateur n\'existe pas en BDD.');
+        }
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+    }
+
+    #[Route('/{id}/desinscription', name: '_unsubscribe', requirements: ['id' => '\d+'])]
+    public function userUnsubscribe(Request $request, Sortie $sortie, EntityManagerInterface $entityManager, SortieRepository $sortieRepository): Response
+    {
+        $sortieId = $entityManager->getRepository(Sortie::class)->find($sortie->getId())->getId();
+
+        if (!$sortieId){
+            $this->addFlash('danger', 'Désinscription impossible - cette Sortie n\'existe pas en BDD.');
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        $etatId = $sortie->getEtat()->getId();
+
+        if ($etatId !== 2 and $etatId !== 3) {
+            $flashMessage = match ($sortie->getEtat()->getId()){
+                1 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie n\'est pas publiée',
+                4 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie a déjà démarrée',
+                5 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie est terminée',
+                6 => 'Accès refusé à "'.$sortie->getNom().'" - la Sortie est terminée et archivée',
+                default => 'Accès refusé - la Sortie est dans un état inconnu',
+            };
+
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
     public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
@@ -195,6 +261,27 @@ class SortieController extends AbstractController
         return new JsonResponse(['success' => true]);
     }
 
+
+
+            $this->addFlash('danger', $flashMessage);
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        $user = $this->getUser();
+        $userId = null;
+
+        if($user){
+            $userId = $entityManager->getRepository(User::class)->find($user->getId())->getId();
+        }
+
+        if ($userId) {
+            $flashMessage = $sortieRepository->userUnsubscribe($sortie, $user);
+            $this->addFlash($flashMessage['label'], $flashMessage['message']);
+        } else {
+            $this->addFlash('danger', 'Désinscription impossible - cet Utilisateur n\'existe pas en BDD.');
+        }
+        return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+    }
 
 }
 
