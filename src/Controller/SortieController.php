@@ -10,24 +10,32 @@ use App\Entity\Ville;
 use App\Form\SortieType;
 use App\Form\UpdateType;
 use App\Helper\FileUploader;
+use App\Manager\SortieManager;
 use App\Repository\SortieRepository;
+use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use function Symfony\Component\String\s;
 
 #[Route('/sortie', name: 'sortie')]
 class SortieController extends AbstractController
 {
+    public function __construct(private SortieManager $sortieManager){}
     #[Route('/list', name: '_list')]
-    public function list(SortieRepository $sortieRepository): Response
+    public function list(VilleRepository $villeRepository, SortieRepository $sortieRepository): Response
     {
-        $sorties = $sortieRepository->findAll(['etat' => true], ['dateLimiteInscription' => 'DESC']);
+        $this->sortieManager->updateAllSorties();
+
+        $villes = $villeRepository->findBy([], ['nom' => 'ASC']);
+        $sorties = $sortieRepository->findAll();
+
         return $this->render('sortie/list.html.twig', [
+            'villes' => $villes,
             'sorties' => $sorties
         ]);
     }
@@ -35,6 +43,7 @@ class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
     public function detail(Sortie $sortie, Request $request): Response
     {
+        $this->sortieManager->updateAllSorties();
         if ($request->get('partial')) {
             return $this->render('sortie/detail_content.html.twig', [
                 'sortie' => $sortie,
@@ -264,12 +273,12 @@ class SortieController extends AbstractController
 
     }
 
-    #[Route('/cancel-delete/{id}', name: '_cancel_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/cancel-delete/{id}', name: '_cancel_delete', requirements: ['id' => '\d+'])]
     public function cancelDelete(Sortie $sortie, EntityManagerInterface $em): JsonResponse
     {
 
 
-        // Change l'état de la sortie à 6
+        // Change l'état de la sortie à "Annulée"
         $etat = $em->getRepository(Etat::class)->find(6);
         $sortie->setEtat($etat);
         $em->persist($sortie);
@@ -278,6 +287,18 @@ class SortieController extends AbstractController
 
 
         return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/publish/{id}', name: '_publish', requirements: ['id' => '\d+'])]
+    public function publishSortie (Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        // Change l'état de la sortie à "Ouverte"
+        $etat = $em->getRepository(Etat::class)->find(2);
+        $sortie->setEtat($etat);
+        $em->persist($sortie);
+        $em->flush();
+
+        return $this->redirectToRoute('sortie_list');
     }
 
 

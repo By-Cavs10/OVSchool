@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Sortie;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,6 +15,73 @@ class SortieRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Sortie::class);
+    }
+
+    public function findSortiesToPublish(){
+        $sorties = $this->createQueryBuilder('s')
+            ->innerJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etat')
+            ->andWhere('s.dateDebutInscription <= :date')
+            ->setParameter('etat', 'Créée')
+            ->setParameter('date', new \DateTime('Europe/Paris'))
+            ->getQuery()
+            ->getResult();
+
+        return $sorties;
+    }
+
+    public function findSortiesToClose(){
+        $sorties = $this->createQueryBuilder('s')
+            ->innerJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etat')
+            ->andWhere('s.dateLimiteInscription <= :date')
+            ->setParameter('etat', 'Ouverte')
+            ->setParameter('date', new \DateTime('Europe/Paris'))
+            ->getQuery()
+            ->getResult();
+
+        return $sorties;
+    }
+
+    public function findSortiesToBegin(){
+        $sorties = $this->createQueryBuilder('s')
+            ->innerJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etat')
+            ->andWhere('s.dateHeureDebut <= :date')
+            ->setParameter('etat', 'Clôturée')
+            ->setParameter('date', new \DateTime('Europe/Paris'))
+            ->getQuery()
+            ->getResult();
+
+        return $sorties;
+    }
+
+    public function findSortiesToFinish(){
+        $sorties = $this->createQueryBuilder('s')
+            ->innerJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etat')
+            ->andWhere('DATE_ADD(s.dateHeureDebut, s.duree, \'minute\') <= :date')
+            ->setParameter('etat', 'En cours')
+            ->setParameter('date', new \DateTime('Europe/Paris'))
+            ->getQuery()
+            ->getResult();
+
+        return $sorties;
+    }
+
+    public function findSortiesToArchive(){
+        $oneMonthAgo = (new \DateTime('Europe/Paris'))->modify('-1 month');
+        $sorties = $this->createQueryBuilder('s')
+            ->innerJoin('s.etat', 'e')
+            ->andWhere('e.libelle = :etat1 OR e.libelle = :etat2')
+            ->andWhere('s.dateHeureDebut <= :date')
+            ->setParameter('etat1', 'Terminée')
+            ->setParameter('etat2', 'Annulée')
+            ->setParameter('date', $oneMonthAgo)
+            ->getQuery()
+            ->getResult();
+
+        return $sorties;
     }
 
     public function userSubscribe (Sortie $sortie, User $user): array
