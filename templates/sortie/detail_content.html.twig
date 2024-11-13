@@ -1,5 +1,3 @@
-
-
 {% block title %}{% endblock %}
 
 {% block body %}
@@ -16,16 +14,18 @@
         <div class="card">
             <!-- Image de la sortie -->
             {% if sortie.urlPhoto %}
-                <div class="sortie-image">
-                    <img src="{{ asset('upload/sorties/' ~ sortie.urlPhoto) }}" alt="{{ sortie.nom }}" loading="lazy" />
-                </div>
+
+                <img class="sortie-image" src="{{ asset('upload/sorties/' ~ sortie.urlPhoto) }}" alt="{{ sortie.nom }}"
+                     loading="lazy"/>
+
             {% endif %}
 
             <!-- Informations générales de la sortie -->
             <div class="sortie-details">
                 <p><strong>Description :</strong> {{ sortie.infosSortie }}</p>
                 <p><strong>Date et heure de début :</strong> {{ sortie.dateHeureDebut | date('d-m-Y H:i') }}</p>
-                <p><strong>Date limite d'inscription :</strong> {{ sortie.dateLimiteInscription | date('d-m-Y H:i') }}</p>
+                <p><strong>Date limite d'inscription :</strong> {{ sortie.dateLimiteInscription | date('d-m-Y H:i') }}
+                </p>
                 <p><strong>Lieu :</strong> {{ sortie.lieu.nom }}</p>
                 <p><strong>Site associé :</strong>
                     {% for site in sortie.site %}
@@ -60,20 +60,23 @@
         {% endif %}
 
         <!-- Carte Google Maps -->
-        <div  id="map" style="height: 400px; width: 100%;"></div>
+        <div id="map" style="height: 400px; width: 100%;"></div>
 
-<br><br>
-        <div class="action-buttons flex">
-        <!-- Bouton pour éditer la sortie -->
-        <div >
-            <a href="{{ path('sortie_update', {'id': sortie.id}) }}" class="neon-button flex">Éditer</a>
+        <br><br>
+        <div class="action-buttons actionDetailSortie">
+            <!-- Bouton pour éditer la sortie -->
+            <div>
+                <button type="button" class="neon-button flex" onclick="window.location.href='{{ path('sortie_update', {'id': sortie.id}) }}'">Éditer</button>
+            </div>
+
+
+            <!-- Formulaire pour supprimer ou annuler la sortie -->
+            <form id="deleteForm" action="{{ path('sortie_delete', {'id': sortie.id}) }}" method="post">
+                <input type="hidden" name="token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+                <button type="button" class="neon-button flex buttonDecalage" onclick="openModal()">Autres</button>
+            </form>
+
         </div>
-
-        <!-- Formulaire pour supprimer ou annuler la sortie -->
-        <form id="deleteForm" action="{{ path('sortie_delete', {'id': sortie.id}) }}" method="post">
-            <input type="hidden" name="token" value="{{ csrf_token('delete' ~ sortie.id) }}">
-            <button type="button" class="neon-button flex" onclick="openModal()">Autres</button>
-        </form>
 
         <!-- Boîte modale pour confirmation -->
         <div id="confirmationModal" class="modal">
@@ -89,70 +92,71 @@
     </div>
 
 
-   
+
 
 {% endblock %}
 
 {% block javascripts %}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
-<script>
-    function initMap() {
-        let latitude = {{ latitude }};
-        let longitude = {{ longitude }};
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async
+            defer></script>
+    <script>
+        function initMap() {
+            let latitude = {{ latitude }};
+            let longitude = {{ longitude }};
 
 
-        let map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 14,  // Niveau de zoom (ajustez selon vos besoins)
-            center: { lat: latitude, lng: longitude }  // Centrer la carte sur la sortie
-        });
+            let map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,  // Niveau de zoom (ajustez selon vos besoins)
+                center: {lat: latitude, lng: longitude}  // Centrer la carte sur la sortie
+            });
 
 
-        let marker = new google.maps.Marker({
-            position: { lat: latitude, lng: longitude },
-            map: map,
-            title: "Lieu de la sortie"
-        });
-    }
-
-    // Fonction pour ouvrir la boîte modale et afficher les boutons
-    function openModal() {
-        document.getElementById('confirmationModal').style.display = 'flex';
-        // Afficher les boutons uniquement lorsque la modale s'ouvre
-        setTimeout(() => {
-            document.getElementById('confirmationButtons').style.display = 'block';
-        }, 300); // Délai pour une meilleure UX
-    }
-
-    // Fonction pour fermer la boîte modale
-    function closeModal() {
-        document.getElementById('confirmationModal').style.display = 'none';
-        document.getElementById('confirmationButtons').style.display = 'none';
-    }
-
-    // Fonction pour confirmer la suppression avec double confirmation
-    function confirmDeletion() {
-        if (confirm("Êtes-vous sûr de vouloir supprimer cette sortie ?")) {
-            document.getElementById('deleteForm').submit();
+            let marker = new google.maps.Marker({
+                position: {lat: latitude, lng: longitude},
+                map: map,
+                title: "Lieu de la sortie"
+            });
         }
-    }
 
-    // Fonction pour annuler (changer l'état à 6)
-    async function cancelSortie() {
-        if (confirm("Êtes-vous sûr de vouloir annuler cette sortie ?")) {
-            try {
-                const response = await fetch(`{{ path('sortie_cancel_delete', {id: sortie.id}) }}`, { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    alert("La sortie a été annulée avec succès.");
-                    window.location.reload(); // Recharge la page pour refléter les modifications
-                } else {
-                    alert("Erreur lors de l'annulation.");
-                }
-            } catch (error) {
-                console.error("Erreur:", error);
+        // Fonction pour ouvrir la boîte modale et afficher les boutons
+        function openModal() {
+            document.getElementById('confirmationModal').style.display = 'flex';
+            // Afficher les boutons uniquement lorsque la modale s'ouvre
+            setTimeout(() => {
+                document.getElementById('confirmationButtons').style.display = 'block';
+            }, 300); // Délai pour une meilleure UX
+        }
+
+        // Fonction pour fermer la boîte modale
+        function closeModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+            document.getElementById('confirmationButtons').style.display = 'none';
+        }
+
+        // Fonction pour confirmer la suppression avec double confirmation
+        function confirmDeletion() {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cette sortie ?")) {
+                document.getElementById('deleteForm').submit();
             }
         }
-        closeModal(); // Fermer la boîte modale après annulation
-    }
-</script>
+
+        // Fonction pour annuler (changer l'état à 6)
+        async function cancelSortie() {
+            if (confirm("Êtes-vous sûr de vouloir annuler cette sortie ?")) {
+                try {
+                    const response = await fetch(`{{ path('sortie_cancel_delete', {id: sortie.id}) }}`, {method: 'POST'});
+                    const data = await response.json();
+                    if (data.success) {
+                        alert("La sortie a été annulée avec succès.");
+                        window.location.reload(); // Recharge la page pour refléter les modifications
+                    } else {
+                        alert("Erreur lors de l'annulation.");
+                    }
+                } catch (error) {
+                    console.error("Erreur:", error);
+                }
+            }
+            closeModal(); // Fermer la boîte modale après annulation
+        }
+    </script>
 {% endblock %}
