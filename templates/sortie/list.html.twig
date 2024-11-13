@@ -3,6 +3,7 @@
 {% block title %}Sorties{% endblock %}
 
 {% block body %}
+
     <h1>Liste des Sorties</h1>
 
     <div class="sorties-container">
@@ -18,4 +19,146 @@
             <p>Aucune sortie disponible pour le moment.</p>
         {% endfor %}
     </div>
+
+<div class="container">
+    <h1>Liste des Sorties</h1>
+    <h2>Filtrer les sorties</h2>
+
+    <div>
+        <label for="villeSelect">Ville de sortie :</label>
+        <select id="villeSelect">
+            <option value="">-- Choisir une ville --</option>
+            {% for ville in villes %}
+                <option value="{{ ville.id }}">{{ ville.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="searchName">Le nom de la sortie contient :</label>
+        <input type="text" id="searchName" placeholder="un ou des mots clés du nom de la sortie...">
+
+        <label for="dateStart">Date de début (du) :</label>
+        <input type="date" id="dateStart">
+
+        <label for="dateEnd">Date de fin (au) :</label>
+        <input type="date" id="dateEnd">
+
+        <label><input type="checkbox" id="isOrganizer"> Sorties dont je suis organisateur-trice</label>
+        <label><input type="checkbox" id="isParticipant"> Sorties auxquelles je suis inscrit-e</label>
+        <label><input type="checkbox" id="notParticipant"> Sorties auxquelles je ne suis pas inscrit-e</label>
+        <label><input type="checkbox" id="openForRegistration"> Sorties avec l'inscription ouverte</label>
+
+        <button id="searchButton">Rechercher</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="sticky-table table table-bordered">
+            <thead>
+            <tr>
+                <th>Ville</th>
+                <th>Nom de la sortie</th>
+                <th>Date de la sortie</th>
+                <th>Clôture des inscriptions</th>
+                <th>Ratio Inscrits/Places totales</th>
+                <th>État</th>
+                <th>Inscrit?</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sorties %}
+                {% if sortie.etat.id < 7 %}
+                    <tr class="sortie-item" data-ville="{{ sortie.lieu.ville.id }}" data-nom="{{ sortie.nom }}"
+                        data-date="{{ sortie.dateHeureDebut|date('Y-m-d') }}"
+                        data-organizer="{{ sortie.organisateur == app.user ? 'true' : 'false' }}"
+                        data-participant="{{ sortie.participants.contains(app.user) ? 'true' : 'false' }}"
+                        data-status="{{ sortie.etat.libelle }}">
+                        <td>{{ sortie.lieu.ville.nom|upper }}</td>
+                        <td>{{ sortie.nom }}</td>
+                        <td>{{ sortie.dateHeureDebut | date('d-m-Y') }} à {{ sortie.dateHeureDebut | date('H:i') }}</td>
+                        <td>{{ sortie.dateLimiteInscription | date('d-m-y') }}</td>
+                        <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionsMax}} </td>
+                        <td>{{ sortie.etat.libelle|capitalize}}</td>
+                        {% if sortie.participants.contains(app.user) %}
+                            <td>X</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td><a href="{{ path('user_detail', {'id': sortie.organisateur.id}) }}">{{ sortie.organisateur.prenom|capitalize }} {{ sortie.organisateur.nom|upper }}</a></td>
+                        <td>
+                            {% if app.user %}
+                                <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">Afficher</a>
+                                {% if (app.user == sortie.organisateur or is_granted('ROLE_ADMIN')) and sortie.etat.id < 4 %}
+                                    <a href="{{ path('user_detail', {'id': sortie.organisateur.id}) }}">Modifier</a>
+                                {% endif %}
+                                {% if (app.user == sortie.organisateur or is_granted('ROLE_ADMIN')) and sortie.etat.id == 1 %}
+                                    <a href="{{ path('sortie_publish', {'id': sortie.id}) }}">Publier</a>
+                                {% endif %}
+                                {% if sortie.etat.id == 2 %}
+                                    {% if sortie.participants.contains(app.user) %}
+                                        <a href="{{ path('sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire</a>
+                                    {% else %}
+                                        <a href="{{ path('sortie_subscribe', {'id': sortie.id}) }}">S'inscrire</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if (app.user == sortie.organisateur or is_granted('ROLE_ADMIN')) and sortie.etat.id < 4 %}
+                                    <a href="{{ path('sortie_cancel_delete', {'id': sortie.id}) }}">Annuler</a>
+                                {% endif %}
+                                {% if is_granted('ROLE_ADMIN') and (sortie.etat.id == 1 or sortie.etat.id == 2) %}
+                                    <a href="{{ path('sortie_delete', {'id': sortie.id, 'token': csrf_token('delete'~sortie.id)}) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement cette Sortie?')" title="Supprimer la Sortie">Supprimer</a>
+                                {% endif %}
+                            {% else %}
+                                Veuillez vous connecter pour accéder aux options.
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('sortie_edit') }}">Créer une sortie</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const selectedVille = document.getElementById('villeSelect').value;
+            const searchName = document.getElementById('searchName').value.toLowerCase().trim();
+            const dateStart = document.getElementById('dateStart').value ? new Date(document.getElementById('dateStart').value) : null;
+            const dateEnd = document.getElementById('dateEnd').value ? new Date(document.getElementById('dateEnd').value) : null;
+            const isOrganizer = document.getElementById('isOrganizer').checked;
+            const isParticipant = document.getElementById('isParticipant').checked;
+            const notParticipant = document.getElementById('notParticipant').checked;
+            const openForRegistration = document.getElementById('openForRegistration').checked;
+
+            // Parcourir chaque sortie
+            document.querySelectorAll('.sortie-item').forEach(item => {
+                const sortieVille = item.getAttribute('data-ville');
+                const sortieNom = item.getAttribute('data-nom').toLowerCase();
+                const sortieDate = new Date(item.getAttribute('data-date'));
+                const sortieOrganizer = item.getAttribute('data-organizer') === 'true';
+                const sortieParticipant = item.getAttribute('data-participant') === 'true';
+                const sortieStatus = item.getAttribute('data-status');
+
+                let isVisible = true;
+
+                // Vérifier chaque filtre individuellement
+                if (selectedVille && sortieVille !== selectedVille) isVisible = false;
+                if (searchName && !sortieNom.includes(searchName)) isVisible = false;
+                if (dateStart && sortieDate < dateStart) isVisible = false;
+                if (dateEnd && sortieDate > dateEnd) isVisible = false;
+                if (isOrganizer && !sortieOrganizer) isVisible = false;
+                if (isParticipant && !sortieParticipant) isVisible = false;
+                if (notParticipant && sortieParticipant) isVisible = false;
+                if (openForRegistration && sortieStatus !== 'Ouverte') isVisible = false;
+
+                // Afficher ou masquer la sortie
+                item.style.display = isVisible ? 'table-row' : 'none'; // Utilise `table-row` pour le contexte d'une table
+            });
+        });
+    </script>
+
 {% endblock %}
