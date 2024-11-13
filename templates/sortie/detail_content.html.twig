@@ -3,66 +3,92 @@
 {% block title %}{% endblock %}
 
 {% block body %}
+    <div class="detail-container">
+        <!-- Titre de la sortie -->
+        <h1>{{ sortie.nom }}</h1>
 
-    <h1>Detail de la Sortie {{ sortie.id }}</h1>
+        <!-- Lien pour retourner à la liste des sorties -->
+        <a href="{{ path('sortie_list') }}" class="neon-button">Retour à la liste des sorties</a>
 
-    <a href="{{ path('sortie_list')}}">Retour à la liste des sorties</a>
-    <table>
+        <br><br>
 
-        <tr>
-
-            <li>{{ sortie.nom}}</li>
-            <li>{{ sortie.infosSortie }}</li>
-
-
-            <img src="{{ asset('upload/sorties/'~sortie.urlPhoto) }}" width="300px" loading="lazy" alt="{{ sortie.nom }}"/>
-
-            {% for site in sortie.site %}
-                <li>{{ site.nom }}</li>
-            {% endfor %}
-
-            <h2>Partipants : </h2>
-            {% for user in sortie.participants %}
-                <li>{{ user.nom }}</li>
-                <li>{{ user.prenom }}</li>
-            {% endfor %}
-
-            {% if sortie.etat.id == 2 %}
-                {% if sortie.participants.contains(app.user) %}
-                    <a href="{{ path('sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire de la sortie</a>
-                {% else %}
-                    <a href="{{ path('sortie_subscribe', {'id': sortie.id}) }}">S'inscrire à la sortie</a>
-                {% endif %}
+        <!-- Carte de la sortie avec les informations -->
+        <div class="card">
+            <!-- Image de la sortie -->
+            {% if sortie.urlPhoto %}
+                <div class="sortie-image">
+                    <img src="{{ asset('upload/sorties/' ~ sortie.urlPhoto) }}" alt="{{ sortie.nom }}" loading="lazy" />
+                </div>
             {% endif %}
 
-        </tr>
+            <!-- Informations générales de la sortie -->
+            <div class="sortie-details">
+                <p><strong>Description :</strong> {{ sortie.infosSortie }}</p>
+                <p><strong>Date et heure de début :</strong> {{ sortie.dateHeureDebut | date('d-m-Y H:i') }}</p>
+                <p><strong>Date limite d'inscription :</strong> {{ sortie.dateLimiteInscription | date('d-m-Y H:i') }}</p>
+                <p><strong>Lieu :</strong> {{ sortie.lieu.nom }}</p>
+                <p><strong>Site associé :</strong>
+                    {% for site in sortie.site %}
+                        {{ site.nom }}
+                    {% endfor %}
+                </p>
+                <p><strong>Statut :</strong> {{ sortie.etat.libelle }}</p>
+            </div>
+        </div>
 
+        <!-- Liste des participants -->
+        <div class="card participants-card">
+            <h2>Participants :</h2>
+            <ul>
+                {% for user in sortie.participants %}
+                    <li>{{ user.nom }} {{ user.prenom }}</li>
+                {% else %}
+                    <li>Aucun participant pour le moment</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    </table>
+        <!-- Affichage des boutons pour s'inscrire ou se désinscrire en fonction du statut -->
+        {% if sortie.etat.id == 2 %}
+            <div class="action-buttons">
+                {% if sortie.participants.contains(app.user) %}
+                    <a href="{{ path('sortie_unsubscribe', {'id': sortie.id}) }}" class="neon-button">Se désinscrire</a>
+                {% else %}
+                    <a href="{{ path('sortie_subscribe', {'id': sortie.id}) }}" class="neon-button">S'inscrire</a>
+                {% endif %}
+            </div>
+        {% endif %}
 
-    <!-- Carte Google Maps -->
-    <div id="map" style="height: 400px; width: 100%;"></div>
+        <!-- Carte Google Maps -->
+        <div  id="map" style="height: 400px; width: 100%;"></div>
 
-    <a  href="{{ path('sortie_update', {'id' : sortie.id }) }}">Editer</a>
-    <form id="deleteForm" action="{{ path('sortie_delete', {id: sortie.id}) }}" method="post">
-        <input type="hidden" name="token" value="{{ csrf_token('delete' ~ sortie.id) }}">
-        <!-- Bouton principal pour afficher la boîte modale -->
-        <button type="button" class="btn btn-danger" onclick="openModal()">Autres</button>
-    </form>
+<br><br>
+        <div class="action-buttons flex">
+        <!-- Bouton pour éditer la sortie -->
+        <div >
+            <a href="{{ path('sortie_update', {'id': sortie.id}) }}" class="neon-button flex">Éditer</a>
+        </div>
 
-    <!-- Boîte modale -->
-    <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-            <h3>Que souhaitez-vous faire ?</h3>
-            <div id="confirmationButtons" style="display: none;">
-                <button onclick="confirmDeletion()">Supprimer</button>
-                <button onclick="cancelSortie()">Annuler</button>
-                <button onclick="closeModal()">Revenir en arrière</button>
+        <!-- Formulaire pour supprimer ou annuler la sortie -->
+        <form id="deleteForm" action="{{ path('sortie_delete', {'id': sortie.id}) }}" method="post">
+            <input type="hidden" name="token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+            <button type="button" class="neon-button flex" onclick="openModal()">Autres</button>
+        </form>
+
+        <!-- Boîte modale pour confirmation -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content">
+                <h3>Que souhaitez-vous faire ?</h3>
+                <div id="confirmationButtons" style="display: none;">
+                    <button onclick="confirmDeletion()" class="neon-button">Supprimer</button>
+                    <button onclick="cancelSortie()" class="neon-button">Annuler la sortie</button>
+                    <button onclick="closeModal()" class="neon-button">Retour</button>
+                </div>
             </div>
         </div>
     </div>
-{#    <a  href="{{ path('wish_delete', {'id' : wish.id, 'token' : csrf_token('delete'~wish.id) }) }}" onclick="return confirm('Etes vous sûrs ??');">Delete</a>#}
-{#    <a  href="{{ path('commentaire_create', {'idWish' : wish.id}) }}">Ajouter un Commentaire</a>#}
+
+    </div>
 {% endblock %}
 
 {% block javascripts %}

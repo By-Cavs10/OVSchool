@@ -1,22 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SortieController!{% endblock %}
+{% block title %}Sorties{% endblock %}
 
 {% block body %}
-<h1>Liste des Sorties</h1>
+    <h1>Liste des Sorties</h1>
 
-
-    <table>
+    <div class="sorties-container">
         {% for sortie in sorties %}
-            <tr>
-                <td><a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a></td>
-                <td>Le {{ sortie.dateHeureDebut | date('d-m-Y') }} à {{ sortie.dateHeureDebut | date('h:i') }}</td>
-                <td>Inscription jusqu'au {{ sortie.dateLimiteInscription | date('d-m-y') }} à {{ sortie.dateLimiteInscription | date('h:i') }}</td>
-                <td>Statut : {{ sortie.etat.libelle }}</td>
-                <td>
-                    <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">Détails</a>
-                </td>
-            </tr>
+            <div class="card">
+                <h2>{{ sortie.nom }}</h2>
+                <p>Le {{ sortie.dateHeureDebut | date('d-m-Y') }} à {{ sortie.dateHeureDebut | date('H:i') }}</p>
+                <p>Inscription jusqu'au {{ sortie.dateLimiteInscription | date('d-m-Y') }} à {{ sortie.dateLimiteInscription | date('H:i') }}</p>
+                <p>Statut : {{ sortie.etat.libelle }}</p>
+                <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">Voir les détails</a>
+            </div>
+        {% else %}
+            <p>Aucune sortie disponible pour le moment.</p>
         {% endfor %}
-    </table>
+    </div>
 {% endblock %}

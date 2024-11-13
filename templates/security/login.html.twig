@@ -3,37 +3,39 @@
 {% block title %}{{ parent() }} Connexion{% endblock %}
 
 {% block body %}
-<form method="post">
+    <div class="login-container">
+        <form method="post">
+            {% if app.user %}
+                <div class="mb-3">
+                    Vous êtes connecté-e-s en tant que "{{ app.user.userIdentifier }}", cliquez <a href="{{ path('app_logout') }}">ici </a> pour vous déconnecter
+                </div>
+            {% endif %}
 
+            <h1 class="h3 mb-3 font-weight-normal neon-text">Connexion</h1>
 
-    {% if app.user %}
-        <div class="mb-3">
-            Vous êtes connecté-e-s en tant que "{{ app.user.userIdentifier }}", cliquez <a href="{{ path('app_logout') }}">ici </a> pour vous déconnecter
-        </div>
-    {% endif %}
+            <div class="form-group">
+                <label for="inputPseudoOrEmail" class="form-label neon-text">Pseudo ou Email : </label>
+                <input type="text" value="{{ last_username }}" name="_username" id="inputPseudoOrEmail" class="form-control neon-input" autocomplete="email" required autofocus>
+            </div>
 
-    <h1 class="h3 mb-3 font-weight-normal"></h1>
-    <label for="inputPseudoOrEmail">Pseudo ou Email : </label>
-    <input type="text" value="{{ last_username }}" name="_username" id="inputPseudoOrEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Mot de passe : </label>
-    <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+            <div class="form-group">
+                <label for="inputPassword" class="form-label neon-text">Mot de passe : </label>
+                <input type="password" name="_password" id="inputPassword" class="form-control neon-input" autocomplete="current-password" required>
+            </div>
 
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-    {% if error %}
-        <div class="alert alert-danger">Identifiant(s) incorrect(s)</div>
-    {% endif %}
+            {% if error %}
+                <div class="alert alert-danger neon-alert">Identifiant(s) incorrect(s)</div>
+            {% endif %}
 
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Se souvenir de moi
-        </label>
+            <div class="checkbox mb-3">
+                <label class ="neonLabel">
+                    <input type="checkbox" name="_remember_me" class="neon-checkbox"> Se souvenir de moi
+                </label>
+            </div>
+
+            <button class="btn neon-button neonLabel" type="submit">Se connecter</button>
+        </form>
     </div>
-
-    <button class="btn btn-lg btn-primary" type="submit">
-        Se connecter
-    </button>
-</form>
 {% endblock %}

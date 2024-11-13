@@ -2,30 +2,43 @@
 
 {% block title %}
     {{ parent() }}
-
-    {%  if registrationForm.vars.value.id is same as (null) %}
+    {% if registrationForm.vars.value.id is same as (null) %}
         Créér un profil
-    {% else  %}
+    {% else %}
         Modifier un profil
     {% endif %}
-
 {% endblock %}
 
 {% block body %}
-    {%  if registrationForm.vars.value.id is same as (null) %}
-        <h1>Créér un profil</h1>
-    {% else  %}
-        <h1>Modifier un profil</h1>
-    {% endif %}
+    <div class="registration-container">
+        {% if registrationForm.vars.value.id is same as (null) %}
+            <h1>Créér un profil</h1>
+        {% else %}
+            <h1>Modifier un profil</h1>
+        {% endif %}
 
-    {{ form_start(registrationForm) }}
-        {{ form_widget(registrationForm) }}
-        {{ form_errors(registrationForm) }}
-        <button type="submit" class="btn">
-            {{ registrationForm.vars.value.id is same as (null) ? 'Créér':'Modifier'}} un profil
-        </button>
-    {{ form_end(registrationForm) }}
-    {%  if registrationForm.vars.value.id %}
-        <a class="" href="{{ path('user_list') }}" title="Liste des Utilisateurs">Annuler</a>
-    {% endif %}
+        <div class="card registration-card bg-glass">
+            {{ form_start(registrationForm) }}
+
+            {% for field in registrationForm %}
+                <div class="form-group">
+                    {{ form_label(field, null, {'label_attr': {'class': 'form-label neon-text'}}) }}
+                    {{ form_widget(field, {'attr': {'class': 'form-input neon-input'}}) }}
+                    {{ form_errors(field) }}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="neon-button">
+                {{ registrationForm.vars.value.id is same as (null) ? 'Créér' : 'Modifier' }} un profil
+            </button>
+
+            {{ form_end(registrationForm) }}
+        </div>
+
+
+        {% if registrationForm.vars.value.id %}
+                <a class="cancel-link" href="{{ path('user_list') }}" title="Liste des Utilisateurs">Annuler</a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
