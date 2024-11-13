@@ -1,8 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SortieController!{% endblock %}
+{% block title %}Sorties{% endblock %}
 
 {% block body %}
+
+    <h1>Liste des Sorties</h1>
+
+    <div class="sorties-container">
+        {% for sortie in sorties %}
+            <div class="card">
+                <h2>{{ sortie.nom }}</h2>
+                <p>Le {{ sortie.dateHeureDebut | date('d-m-Y') }} à {{ sortie.dateHeureDebut | date('H:i') }}</p>
+                <p>Inscription jusqu'au {{ sortie.dateLimiteInscription | date('d-m-Y') }} à {{ sortie.dateLimiteInscription | date('H:i') }}</p>
+                <p>Statut : {{ sortie.etat.libelle }}</p>
+                <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">Voir les détails</a>
+            </div>
+        {% else %}
+            <p>Aucune sortie disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+
 <div class="container">
     <h1>Liste des Sorties</h1>
     <h2>Filtrer les sorties</h2>
@@ -143,4 +160,5 @@
             });
         });
     </script>
+
 {% endblock %}
