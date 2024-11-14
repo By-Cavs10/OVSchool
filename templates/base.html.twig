@@ -10,6 +10,8 @@
         <link  rel="stylesheet" href="{{ asset('../assets/vendor/bootstrap/dist/css/bootstrap.min.css') }}">
         <link  rel="stylesheet" href="{{ asset('../assets/styles/box.css') }}">
         <link  rel="stylesheet" href="{{ asset('../assets/styles/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('../assets/styles/mediaQueries.css') }}">
+
     {% endblock %}
 </head>
 
@@ -41,7 +43,7 @@
         <!-- Main content -->
         <div class="container-fluid centrerText">
             <div>
-                <a class="navbar-brand titleSite neon-box" href="#">OVSchool</a>
+                <a class="navbar-brand titleSite neon-box" href="https://www.rockstargames.com/fr/VI">OVSchool</a>
             </div>
 
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -58,9 +60,11 @@
                             <a class="nav-link" href="{{ path('user_detail', {'id': app.user.id}) }}">Profil de {{ app.user.pseudo }}</a>
                         </li>
                     {% endif %}
+                    {% if app.user and is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Plus</a>
+                        <a class="nav-link" href="{{ path('user_list') }}">Utilisateurs</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
