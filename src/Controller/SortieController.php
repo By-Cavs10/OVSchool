@@ -131,7 +131,7 @@ class SortieController extends AbstractController
             }
 
             // Associer le lieu à la sortie
-
+            $sortie ->setOrganisateur($this->getUser());
 
             $sortie->setLieu($lieu);
             $em->persist($lieu);

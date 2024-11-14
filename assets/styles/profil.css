@@ -1,0 +1,108 @@
+/* Styles pour la page de profil */
+.profil-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.profil-photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border: 3px solid #fff;
+}
+
+.profil-details {
+    text-align: left;
+    padding: 1rem;
+    line-height: 1.6;
+    font-family: Quicksand, sans-serif;
+    font-size: 1.1em
+;
+}
+
+.SousTitre {
+    font-weight: bold;
+    color: #ff6363;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+
+.buttonDecalageSortie {
+    margin-bottom: 15px;
+}
+
+.champsProfil{
+    color: #FFFFFF;
+}
+
+
+.table-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    margin: 1rem 0;
+    font-family: Quicksand, sans-serif;
+    color: #FFFFFF;
+}
+
+.styled-table th, .styled-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table th {
+    background-color: #ff6363;
+    color: white;
+    font-weight: bold;
+}
+
+.styled-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.styled-table tr:hover {
+    background-color: rgba(255, 99, 99, 0.1);
+}
+
+.actions-cell {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.neon-button-users {
+    padding: 0.5rem 1rem;
+    background-color: #ff6363;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.neon-button-users:hover {
+    background-color: #ff4141;
+}
+
+

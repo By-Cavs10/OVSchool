@@ -1,14 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }}Liste des utilisateurs{% endblock %}
+{% block title %}{{ parent() }} Liste des utilisateurs {% endblock %}
 
 {% block body %}
-    <h1>Liste des utilisateurs</h1>
+    <div class="container">
+        <h1 class="titleSite centrerText">Liste des utilisateurs</h1>
 
-    {%  if users %}
-        <div>
-            <table>
-                <thead>
+        {% if users %}
+            <div class="neon-box table-container">
+                <table class="styled-table">
+                    <thead>
                     <tr>
                         <th>Campus</th>
                         <th>Nom</th>
@@ -16,46 +17,42 @@
                         {% if is_granted('ROLE_ADMIN') %}
                             <th>Email</th>
                             <th>Rôle(s)</th>
-                            <th>État du compte</th>
+                            <th>État</th>
                         {% endif %}
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
-                </thead>
-                <tbody>
-                {% for user in users %}
-                    {% if user.actif is same as (true) or is_granted('ROLE_ADMIN') %}
-                        <tr>
-                            <td>{{ user.site.nom|default("Non renseigné(e)")  }}</td>
-                            <td>{{ user.nom|default("Non renseigné(e)") }}</td>
-                            <td>{{ user.prenom|default("Non renseigné(e)") }}</td>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <td>{{ user.email|default("Non renseigné(e)") }}</td>
-                                <td>
-                                    {% for role in user.roles %}
-                                        {{ role }}
-                                    {%  else %}
-                                        Rôle(s) non renseigné(s)
-                                    {%  endfor %}
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        {% if user.actif is same as(true) or is_granted('ROLE_ADMIN') %}
+                            <tr>
+                                <td>{{ user.site.nom|default("Non renseigné(e)") }}</td>
+                                <td>{{ user.nom|default("Non renseigné(e)") }}</td>
+                                <td>{{ user.prenom|default("Non renseigné(e)") }}</td>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <td>{{ user.email|default("Non renseigné(e)") }}</td>
+                                    <td>
+                                        {% for role in user.roles %}
+                                            {{ role }}
+                                        {% else %}
+                                            Aucun rôle
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {{ user.actif ? 'Activé' : 'Désactivé' }}
+                                    </td>
+                                {% endif %}
+                                <td class="actions-cell">
+                                    <a href="{{ path('user_detail', {'id': user.id}) }}" class="neon-button-users">Détails</a>
                                 </td>
-                                <td>
-                                    {% if user.actif %}
-                                        Activé
-                                    {% else %}
-                                        Désactivé
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                            <td>
-                                <a href="{{ path('user_detail', {'id': user.id}) }}">Détails</a>
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <h2>Pas d'utilisateurs définis en BDD</h2>
-    {% endif %}
-
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <h2 class="centrerText">Pas d'utilisateurs définis en BDD</h2>
+        {% endif %}
+    </div>
 {% endblock %}

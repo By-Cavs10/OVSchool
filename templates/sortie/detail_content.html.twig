@@ -6,9 +6,12 @@
         <h1>{{ sortie.nom }}</h1>
 
         <!-- Lien pour retourner à la liste des sorties -->
-        <a href="{{ path('sortie_list') }}" class="neon-button">Retour à la liste des sorties</a>
 
-        <br><br>
+        <div>
+            <button type="button" class="neon-button flex buttonDecalageSortie" onclick="window.location.href='{{ path('sortie_list') }}'">Retour à la liste des sorties</button>
+        </div>
+
+
 
         <!-- Carte de la sortie avec les informations -->
         <div class="card">
@@ -73,7 +76,7 @@
             <!-- Formulaire pour supprimer ou annuler la sortie -->
             <form id="deleteForm" action="{{ path('sortie_delete', {'id': sortie.id}) }}" method="post">
                 <input type="hidden" name="token" value="{{ csrf_token('delete' ~ sortie.id) }}">
-                <button type="button" class="neon-button flex buttonDecalage" onclick="openModal()">Autres</button>
+                <button type="button" class="neon-button flex " onclick="openModal()">Autres</button>
             </form>
 
         </div>

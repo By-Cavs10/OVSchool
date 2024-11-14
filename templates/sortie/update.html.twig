@@ -1,56 +1,63 @@
 {% extends 'base.html.twig' %}
 
-{% form_theme form 'bootstrap_5_layout.html.twig' %}
 
 {% block title %}{{ parent() }} :: Edition{% endblock %}
 
 {% block body %}
-    <div>
-        <h2>{{ sortie.nom }}</h2>
+    <div class="registration-container">
+        <h1>{{ sortie.nom }}</h1>
         <!-- Formulaire complet avec tous les champs personnalisés -->
-        {{ form_start(form) }}
+        <div class="card registration-card bg-glass champsProfil  ">
+            {{ form_start(form) }}
 
-        <!-- Affichage de l'option d'inscription (Maintenant ou Plus tard) -->
-
-
-        <!-- Autres champs -->
-        <div id="form-other-fields">
+            <!-- Affichage de l'option d'inscription (Maintenant ou Plus tard) -->
 
 
+            <!-- Autres champs -->
+            <div class="form-groupSortie" id="form-other-fields">
 
-            {{ form_row(form.dateHeureDebut) }}
-            {{ form_row(form.duree) }}
-            {{ form_row(form.dateLimiteInscription) }}
-            {{ form_row(form.nbInscriptionsMax) }}
-            {{ form_row(form.infosSortie) }}
-            {{ form_row(form.urlPhoto) }}
-            {{ form_row(form.site) }}
-            {{ form_row(form.organisateur) }}
-            {{ form_row(form.participants) }}
+
+                {{ form_row(form.dateHeureDebut, {'attr': {'class': 'form-inputSortie neon-input'}}) }}
+                {{ form_row(form.duree, {'attr': {'class': 'form-inputSortie neon-input'}}) }}
+                {{ form_row(form.dateLimiteInscription, {'attr': {'class': 'form-inputSortie neon-input'}}) }}
+                {{ form_row(form.nbInscriptionsMax, {'attr': {'class': 'form-inputSortie neon-input'}}) }}
+                {{ form_row(form.infosSortie, {'attr': {'class': 'form-inputSortie neon-input'}}) }}
+                {{ form_row(form.urlPhoto, {'attr': {'class': 'form-inputSortie neon-input'}}) }}
+
+
+            </div>
+
+
+            <!-- Champ de date début d'inscription, masqué par défaut -->
+            <div id="dateDebutInscriptionField" data-date="{{ form.dateDebutInscription.vars.value|date('Y-m-d') }}"
+                 style="display: none;">
+                {{ form_row(form.dateDebutInscription) }}
+            </div>
+
+            <!-- Soumettre le formulaire -->
+            <div class="action-buttons actionDetailSortie">
+                {{ form_row(form.submit, {'attr': {'class': 'neon-button'}}) }}
+
+
+                {% if sortie.id is defined %}
+
+                    <button type="button" class="cancel-link neon-button"
+                            onclick="window.location.href='{{ path('sortie_detail', {'id': sortie.id}) }}'">Annuler
+                    </button>
+
+                {% endif %}
+            </div>
+            {{ form_end(form) }}
         </div>
-
-
-
-        <!-- Champ de date début d'inscription, masqué par défaut -->
-        <div id="dateDebutInscriptionField" data-date="{{ form.dateDebutInscription.vars.value|date('Y-m-d') }}" style="display: none;">
-        {{ form_row(form.dateDebutInscription) }}
     </div>
-
-        <!-- Soumettre le formulaire -->
-        <div class="form-group">
-            {{ form_row(form.submit) }}
-        </div>
-
-        {{ form_end(form) }}
-    </div>
-
 
 {% endblock %}
 {% block javascripts %}
+    {{ parent() }}
 
     <script>
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
 
             const dateField = document.getElementById("dateDebutInscriptionField");
             const dateValue = dateField.getAttribute("data-date");

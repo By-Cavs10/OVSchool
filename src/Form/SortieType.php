@@ -91,8 +91,8 @@ class SortieType extends AbstractType
                 'required' => true,
             ])
             ->add('duree', IntegerType::class, [
-                'label' => 'Durée',
-                'help' => 'min (minutes)',
+                'label' => 'Durée (en minutes)',
+//                'help' => 'min (minutes)',
                 'required' => true,
             ])
             ->add('dateLimiteInscription', DateType::class, [
@@ -126,17 +126,10 @@ class SortieType extends AbstractType
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'required' => true,
+
             ])
-            ->add('organisateur', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'nom',
-                'required' => true,
-            ])
-            ->add('participants', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'nom',
-                'multiple' => true,
-            ])
+
+
 
             ->add('dateDebutInscription', DateType::class, [
                 'widget' => 'single_text',
@@ -157,7 +150,7 @@ class SortieType extends AbstractType
             ])
 
             ->add('submit', SubmitType::class, [
-                'label' => 'OK'
+                'label' => 'Créer'
             ]);
     }
 
