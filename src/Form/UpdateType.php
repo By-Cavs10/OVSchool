@@ -31,33 +31,12 @@ class UpdateType extends AbstractType
     {
         $builder
 
-
-
-
-//            ->add('lieu', EntityType::class, [
-//                'class' => Lieu::class,
-//                'required' => true,
-//                'choice_label' => 'nom',
-//                'label' => 'nom',
-//                'multiple' => false,
-//                'expanded' => true,
-//            ])
-
-//            ->add('ville', EntityType::class, [
-//                'class' => Ville::class,
-//                'choice_label' => 'nom',
-//                'required' => true,
-//                'label' => 'Ville',
-//                'mapped' => false,
-//            ])
-
             ->add('dateHeureDebut', DateTimeType::class, [
                 'widget' => 'single_text',
                 'required' => true,
             ])
             ->add('duree', IntegerType::class, [
                 'label' => 'Durée (en minutes)',
-//                'help' => 'min (minutes)',
                 'required' => true,
             ])
             ->add('dateLimiteInscription', DateType::class, [
@@ -82,26 +61,6 @@ class UpdateType extends AbstractType
                     ])
                 ]
             ])
-//            ->add('etat', EntityType::class, [
-//                'class' => Etat::class,
-//                'choice_label' => 'libelle',
-//                'required' => true,
-//            ])
-//            ->add('site', EntityType::class, [
-//                'class' => Site::class,
-//                'choice_label' => 'nom',
-//                'required' => true,
-//            ])
-//            ->add('organisateur', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'nom',
-//                'required' => true,
-//            ])
-//            ->add('participants', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'nom',
-//                'multiple' => true,
-//            ])
 
             ->add('dateDebutInscription', DateType::class, [
                 'widget' => 'single_text',

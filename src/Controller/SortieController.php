@@ -64,35 +64,34 @@ class SortieController extends AbstractController
     #[Route('/edit', name: '_edit')]
     public function create(Request $request, EntityManagerInterface $em, FileUploader $fileUploader): Response
     {
-        $sortie = new Sortie();  // Créer une nouvelle sortie
+        $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);  // Créer le formulaire pour Sortie
 
         $form->handleRequest($request);
         $googleMapsApiKey = $_ENV['GOOGLE_API_KEY'];
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer les données des champs cachés du formulaire
+            // Récupération les données des champs cachés du formulaire
             $latitude = $form->get('latitude')->getData();
             $longitude = $form->get('longitude')->getData();
-            $nomLieu = $form->get('nomLieu')->getData();  // Nom du lieu
+            $nomLieu = $form->get('nomLieu')->getData();
             $rue = $form->get('rue')->getData();
             $codePostal = $form->get('codePostal')->getData();
-            $nomVille = $form->get('nomVille')->getData();  // Nom de la ville
+            $nomVille = $form->get('nomVille')->getData();
 
-            // Créer ou récupérer la ville
             $ville = $em->getRepository(Ville::class)->findOneBy(['nom' => $nomVille]);
             $lieu = $em->getRepository(Lieu::class)->findOneBy(['nom' => $nomLieu, 'rue' => $rue]);
 
             if (!$ville) {
-                // Si la ville n'existe pas encore, la créer
+
                 $ville = new Ville();
                 $ville->setNom($nomVille);
                 $ville->setCodePostal($codePostal);
-                $em->persist($ville);  // Persister la ville
+                $em->persist($ville);
             }
 
                 // Gérer le cas où $nomLieu est vide
             if (!$lieu) {
-                // Créer l'entité Lieu
+
                 $lieu = new Lieu();
                 $lieu->setNom($nomLieu);
                 $lieu->setLatitude($latitude);
@@ -113,8 +112,8 @@ class SortieController extends AbstractController
             if ($inscriptionOption === 'now') {
                 $sortie->setDateDebutInscription(null);
 
-                // Récupérer l'objet Etat avec l'ID (2 ici par exemple)
-                $etat = $em->getRepository(Etat::class)->find(2);  // 2 pour l'état "ouverte"
+
+                $etat = $em->getRepository(Etat::class)->find(2);
                 if ($etat) {
                     $sortie->setEtat($etat);  // Assigner l'entité Etat à Sortie
                 }
@@ -126,22 +125,22 @@ class SortieController extends AbstractController
                 // Récupérer l'objet Etat avec l'ID (1 ici par exemple)
                 $etat = $em->getRepository(Etat::class)->find(1);  // 1 pour l'état "créé"
                 if ($etat) {
-                    $sortie->setEtat($etat);  // Assigner l'entité Etat à Sortie
+                    $sortie->setEtat($etat);
                 }
             }
 
-            // Associer le lieu à la sortie
+
             $sortie ->setOrganisateur($this->getUser());
 
             $sortie->setLieu($lieu);
             $em->persist($lieu);
-            $em->persist($sortie);  // Persister la sortie
+            $em->persist($sortie);
             $em->flush();
 
-            // Message de confirmation
+
             $this->addFlash('success', 'Sortie bien créée');
 
-            // Redirection après la création
+
             return $this->redirectToRoute('sortie_list');
         }
 

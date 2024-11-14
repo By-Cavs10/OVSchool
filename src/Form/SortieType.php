@@ -53,7 +53,6 @@ class SortieType extends AbstractType
                         'min' => 3,
                         'minMessage' => 'Le lieu doit faire au minimum {{ limit }} caractères.',
                         'maxMessage' => 'Le lieu doit faire au minimum {{ limit }} caractères.',
-                        // max length allowed by Symfony for security reasons
                         'max' => 30,
 
                     ])
@@ -69,30 +68,12 @@ class SortieType extends AbstractType
                 'mapped' => false,
             ])
 
-//            ->add('lieu', EntityType::class, [
-//                'class' => Lieu::class,
-//                'required' => true,
-//                'choice_label' => 'nom',
-//                'label' => 'nom',
-//                'multiple' => false,
-//                'expanded' => true,
-//            ])
-
-//            ->add('ville', EntityType::class, [
-//                'class' => Ville::class,
-//                'choice_label' => 'nom',
-//                'required' => true,
-//                'label' => 'Ville',
-//                'mapped' => false,
-//            ])
-
             ->add('dateHeureDebut', DateTimeType::class, [
                 'widget' => 'single_text',
                 'required' => true,
             ])
             ->add('duree', IntegerType::class, [
                 'label' => 'Durée (en minutes)',
-//                'help' => 'min (minutes)',
                 'required' => true,
             ])
             ->add('dateLimiteInscription', DateType::class, [
@@ -117,19 +98,13 @@ class SortieType extends AbstractType
                     ])
                 ]
             ])
-//            ->add('etat', EntityType::class, [
-//                'class' => Etat::class,
-//                'choice_label' => 'libelle',
-//                'required' => true,
-//            ])
+
             ->add('site', EntityType::class, [
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'required' => true,
 
             ])
-
-
 
             ->add('dateDebutInscription', DateType::class, [
                 'widget' => 'single_text',
@@ -143,7 +118,7 @@ class SortieType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-                'mapped' => false,  // Ne pas mapper directement ce champ à l'entité
+                'mapped' => false,
                 'label' => 'Ouverture des inscriptions',
                 'data' => 'now',
 
