@@ -145,7 +145,9 @@ body{
     justify-content: center;
 }
 
+
 main {
+
     background-size: cover;
     background-position: center;
     height: 100vh;
@@ -189,5 +191,81 @@ main {
 
 .sticky-table tbody tr:hover {
     background-color: #f5f5f5;
+}
+
+.card {
+    background-color: #121212; /* Fond noir */
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.3);
+    max-width: 600px;
+}
+
+.card-body {
+    color: white;
+}
+
+.card label, .card select, .card input, .card button {
+    color: white;
+}
+
+.card h2 {
+    color: var(--color-neon-blue);
+    text-shadow: 0 0 10px var(--color-neon-blue), 0 0 20px var(--color-neon-blue);
+}
+
+/* Style par défaut */
+.neon-input {
+    background-color: #121212; /* Fond noir */
+    color: white; /* Texte blanc */
+    border: 1px solid var(--color-neon-pink); /* Bordure néon */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transition pour la fluidité */
+}
+
+/* Style quand le champ est en focus */
+.neon-input:focus {
+    background-color: white; /* Fond blanc */
+    color: black; /* Texte noir */
+    border-color: var(--color-neon-blue); /* Bordure passe au bleu néon */
+    outline: none; /* Retirer le contour bleu par défaut */
+}
+
+/* Placeholder pour le rendre également en blanc */
+.neon-input::placeholder {
+    color: rgba(255, 255, 255, 0.7); /* Placeholder en blanc semi-transparent */
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+}
+
+footer h5 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+footer ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+footer ul li {
+    margin-bottom: 8px;
+}
+
+footer a {
+    text-decoration: none;
+    color: white;
+}
+
+footer a:hover {
+    color: #ff5722;
+}
+
+.login-form{
+    padding: 10px;
+
 }
 

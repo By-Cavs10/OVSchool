@@ -8,13 +8,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-#[Route(path: '/', name: 'app')]
 class SecurityController extends AbstractController
 {
-    #[Route(path: 'connexion', name: '_login')]
+    #[Route(path: '/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
+             $this->addFlash('warning', 'Vous êtes déjà connecté-e.');
              return $this->redirectToRoute('main_home');
          }
 
@@ -26,19 +26,19 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
-    #[Route('', name: '_home')]
-    public function logoutSuccess(EntityManagerInterface $entityManager): Response
+    #[Route('/deconnexion-succes', name: 'app_logout_success')]
+    public function logoutSuccess(): Response
     {
-        $user=$entityManager->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+        $this->addFlash('success', 'Vous vous êtes déconnecté-e avec succès.');
 
-        $this->addFlash('success', 'Au revoir '.$user->getPseudo().', vous vous êtes déconnecté-e avec succès.');
         return $this->redirectToRoute('main_home');
     }
 
-    #[Route('/login_success', name: 'login_success')]
-    public function loginSuccess(EntityManagerInterface $entityManager): Response
+    #[Route('/connexion-succes', name: 'app_login_success')]
+    public function loginSuccess(): Response
     {
-        $user=$entityManager->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $user=$this->getUser();
 
         // Ajouter le message flash de bienvenue
         $this->addFlash('success', 'Bienvenue '.$user->getPseudo().', vous vous êtes connecté-e avec succès !');
@@ -47,7 +47,7 @@ class SecurityController extends AbstractController
         return $this->redirectToRoute('main_home');
     }
 
-    #[Route(path: 'deconnexion', name: '_logout')]
+    #[Route(path: '/deconnexion', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
