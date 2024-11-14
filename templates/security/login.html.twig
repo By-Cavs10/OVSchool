@@ -3,13 +3,10 @@
 {% block title %}{{ parent() }} Connexion{% endblock %}
 
 {% block body %}
+    <br>
+    <br>
     <div class="login-container">
-        <form method="post">
-            {% if app.user %}
-                <div class="mb-3">
-                    Vous êtes connecté-e-s en tant que "{{ app.user.userIdentifier }}", cliquez <a href="{{ path('app_logout') }}">ici </a> pour vous déconnecter
-                </div>
-            {% endif %}
+        <form class="login-form" method="post">
 
             <h1 class="h3 mb-3 font-weight-normal neon-text">Connexion</h1>
 
@@ -35,7 +32,11 @@
                 </label>
             </div>
 
-            <button class="btn neon-button neonLabel" type="submit">Se connecter</button>
+            <div class="d-flex justify-content-center mb-4">
+                <button class="btn neon-button neonLabel" type="submit">Se connecter</button>
+            </div>
         </form>
     </div>
+    <br>
+    <br>
 {% endblock %}
