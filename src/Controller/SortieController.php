@@ -14,15 +14,16 @@ use App\Manager\SortieManager;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/sortie', name: 'sortie')]
+#[IsGranted('ROLE_USER')]
 class SortieController extends AbstractController
 {
     public function __construct(private SortieManager $sortieManager){}
@@ -240,6 +241,10 @@ class SortieController extends AbstractController
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
     public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $sortie->getOrganisateur()) {
+            throw $this->createAccessDeniedException('Accès refusé - impossible de modifier cette Sortie');
+        }
+
         $form = $this->createForm(UpdateType::class, $sortie);
         $form->handleRequest($request);
 
@@ -259,6 +264,7 @@ class SortieController extends AbstractController
 
 
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
     {
         if ($this->isCsrfTokenValid('delete'.$sortie->getId(), $request->get('token'))) {
@@ -276,7 +282,9 @@ class SortieController extends AbstractController
     #[Route('/cancel-delete/{id}', name: '_cancel_delete', requirements: ['id' => '\d+'])]
     public function cancelDelete(Sortie $sortie, EntityManagerInterface $em): JsonResponse
     {
-
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $sortie->getOrganisateur()) {
+            throw $this->createAccessDeniedException('Accès refusé - impossible d\'annuler cette Sortie');
+        }
 
         // Change l'état de la sortie à "Annulée"
         $etat = $em->getRepository(Etat::class)->find(6);
@@ -292,19 +300,18 @@ class SortieController extends AbstractController
     #[Route('/publish/{id}', name: '_publish', requirements: ['id' => '\d+'])]
     public function publishSortie (Sortie $sortie, EntityManagerInterface $em): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $sortie->getOrganisateur()) {
+            throw $this->createAccessDeniedException('Accès refusé - impossible de publier cette Sortie');
+        }
+
         // Change l'état de la sortie à "Ouverte"
         $etat = $em->getRepository(Etat::class)->find(2);
         $sortie->setEtat($etat);
         $em->persist($sortie);
         $em->flush();
 
+        $this->addFlash('success', 'La sortie "'.$sortie->getNom().'" est ouverte aux inscriptions.');
+
         return $this->redirectToRoute('sortie_list');
     }
-
-
-
-
-
 }
-
-

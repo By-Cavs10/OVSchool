@@ -79,27 +79,41 @@
                             {% endif %}
                             <p>Places occupées : {{ sortie.participants|length }}/{{ sortie.nbInscriptionsMax}}</p>
                             <p>Inscrit-e ? {{ sortie.participants.contains(app.user)? 'Oui':'Non'}}</p>
-                            <div class="sorties-liens">
+                            <div class="sorties-liens row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
                                 {% if app.user %}
-                                    <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">Afficher</a>
+                                    <div class="col">
+                                        <button type="button" class="neon-button flex w-100" onclick="window.location.href='{{ path('sortie_detail', {'id': sortie.id}) }}'" title="Afficher la Sortie">Afficher</button>
+                                    </div>
                                     {% if (app.user == sortie.organisateur or is_granted('ROLE_ADMIN')) and sortie.etat.id < 4 %}
-                                        <a href="{{ path('user_detail', {'id': sortie.organisateur.id}) }}">Modifier</a>
+                                        <div class="col">
+                                            <button type="button" class="neon-button flex w-100" onclick="window.location.href='{{ path('sortie_update', {'id': sortie.id}) }}'" title="Modifier la Sortie">Modifier</button>
+                                        </div>
                                     {% endif %}
                                     {% if (app.user == sortie.organisateur or is_granted('ROLE_ADMIN')) and sortie.etat.id == 1 %}
-                                        <a href="{{ path('sortie_publish', {'id': sortie.id}) }}">Publier</a>
+                                        <div class="col">
+                                            <button type="button" class="neon-button flex w-100" onclick="window.location.href='{{ path('sortie_publish', {'id': sortie.id}) }}'" title="Publier la Sortie">Publier</button>
+                                        </div>
                                     {% endif %}
                                     {% if sortie.etat.id == 2 %}
                                         {% if sortie.participants.contains(app.user) %}
-                                            <a href="{{ path('sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire</a>
+                                            <div class="col">
+                                                <button type="button" class="neon-button flex w-100" onclick="window.location.href='{{ path('sortie_unsubscribe', {'id': sortie.id}) }}'" title="Se désinscrire la Sortie">Se désinscrire</button>
+                                            </div>
                                         {% else %}
-                                            <a href="{{ path('sortie_subscribe', {'id': sortie.id}) }}">S'inscrire</a>
+                                            <div class="col">
+                                                <button type="button" class="neon-button flex w-100" onclick="window.location.href='{{ path('sortie_subscribe', {'id': sortie.id}) }}'" title="S'inscrire la Sortie">S'inscrire</button>
+                                            </div>
                                         {% endif %}
                                     {% endif %}
                                     {% if (app.user == sortie.organisateur or is_granted('ROLE_ADMIN')) and sortie.etat.id < 4 %}
-                                        <a href="{{ path('sortie_cancel_delete', {'id': sortie.id}) }}">Annuler</a>
+                                        <div class="col">
+                                            <button type="button" class="neon-button flex w-100" onclick="window.location.href='{{ path('sortie_cancel_delete', {'id': sortie.id}) }}'" title="Annuler la Sortie">Annuler</button>
+                                        </div>
                                     {% endif %}
                                     {% if is_granted('ROLE_ADMIN') and (sortie.etat.id == 1 or sortie.etat.id == 2) %}
-                                        <a href="{{ path('sortie_delete', {'id': sortie.id, 'token': csrf_token('delete'~sortie.id)}) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement cette Sortie?')" title="Supprimer la Sortie">Supprimer</a>
+                                        <div class="col">
+                                            <button type="button" class="neon-button flex w-100" onclick="if (confirm('Êtes-vous sûr de vouloir supprimer définitivement cette Sortie?')) { window.location.href='{{ path('sortie_delete', {'id': sortie.id, 'token': csrf_token('delete'~sortie.id)}) }}'; }" title="Supprimer la Sortie">Supprimer</button>
+                                        </div>
                                     {% endif %}
                                 {% else %}
                                     Veuillez vous connecter pour accéder aux options.

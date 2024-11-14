@@ -13,11 +13,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/user', name: 'user')]
 class UserController extends AbstractController
 {
     #[Route('/list', name: '_list')]
+    #[IsGranted('ROLE_ADMIN')]
     public function list(EntityManagerInterface $entityManager): Response
     {
 
@@ -31,6 +33,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: '_detail', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function detail(int $id, EntityManagerInterface $entityManager): Response
     {
         $userRepository = $entityManager->getRepository(User::class);
@@ -49,6 +52,10 @@ class UserController extends AbstractController
     #[Route('/create', name: '_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
+        if ($this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Accès refusé - impossible de créér de nouveau un compte pour un User non administrateur');
+        }
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -63,7 +70,6 @@ class UserController extends AbstractController
                 $this->addFlash('danger', 'Les mots de passe doivent correspondre.');
                 return $this->render('registration/register.html.twig', [
                     'registrationForm' => $form,
-//                    ou $form->createView()
                 ]);
             }
 
@@ -100,8 +106,13 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function update(int $id, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser()->getId() != $id) {
+            throw $this->createAccessDeniedException('Accès refusé - impossible de modifier ce compte User');
+        }
+
         $user = $entityManager->getRepository(User::class)->find($id);
 
         if (!$user) {
@@ -157,6 +168,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $user = $entityManager->getRepository(User::class)->find($id);

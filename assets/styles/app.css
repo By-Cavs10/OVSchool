@@ -34,9 +34,6 @@
     src: url('../fonts/Quicksand.otf') format('truetype');
 }
 
-body{
-    z-index: -1;
-}
 
 .indexParagraph{
     margin-bottom: 60px;
@@ -146,11 +143,11 @@ body{
 }
 
 
-main {
-
+body {
     background-size: cover;
     background-position: center;
     height: 100vh;
+    z-index: -1
 }
 
 
@@ -236,6 +233,8 @@ main {
 }
 
 footer {
+
+    width: 100%;
     background-color: #343a40;
     color: white;
     padding: 20px 0;

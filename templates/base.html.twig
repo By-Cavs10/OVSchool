@@ -15,26 +15,10 @@
     {% endblock %}
 </head>
 
-<body class="d-flex flex-column" style="background-image: url('{{ asset('image/fondRouge.jpg') }}');">
+<body class="d-flex flex-column min-vh-100" style="background-image: url('{{ asset('image/fondRouge.jpg') }}');">
 <header class="background" style="background-image: url('{{ asset('image/street.jpg') }}');">
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <!-- Auth links -->
-        <div class="auth-nav bg-glass">
-            {% if app.user %}
-                <a class="nav-link text-white" href="{{ path('app_logout') }}">
-                    <i class="fas fa-sign-out-alt"></i> Déconnexion
-                </a>
-            {% else %}
-                <a class="nav-link text-white" href="{{ path('app_login') }}">
-                    <i class="fas fa-sign-in-alt"></i> Connexion
-                </a>
-                <a class="nav-link text-white" href="{{ path('user_register') }}">
-                    <i class="fas fa-user-plus"></i> Inscription
-                </a>
-            {% endif %}
-        </div>
-
-        <!-- Burger menu button -->
+       <!-- Burger menu button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -52,18 +36,34 @@
                         <a class="nav-link active SousTitre" aria-current="page"
                            href="{{ path('main_home') }}">Accueil</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('sortie_list') }}">Sorties</a>
-                    </li>
                     {% if app.user %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('sortie_list') }}">Sorties</a>
+                        </li>
+                        {% if app.user and is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('user_list') }}">Utilisateurs</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('user_detail', {'id': app.user.id}) }}">Profil de {{ app.user.pseudo }}</a>
                         </li>
-                    {% endif %}
-                    {% if app.user and is_granted('ROLE_ADMIN') %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('user_list') }}">Utilisateurs</a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ path('app_logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ path('app_login') }}">
+                                <i class="fas fa-sign-in-alt"></i> Connexion
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ path('user_register') }}">
+                                <i class="fas fa-user-plus"></i> Inscription
+                            </a>
+                         </li>
                     {% endif %}
                 </ul>
             </div>
@@ -72,14 +72,16 @@
 </header>
 
 <main class="container flex-grow-1">
-    {% for type, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+    <div class="container mt-4 mb-4">
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+    </div>
 
     {% block body %}{% endblock %}
 </main>

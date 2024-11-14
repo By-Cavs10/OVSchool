@@ -25,11 +25,12 @@
                     {{ form_label(field, null, {'label_attr': {'class': 'form-label neon-text'}}) }}
                     {{ form_widget(field, {'attr': {'class': 'form-input neon-input'}}) }}
                     {{ form_errors(field) }}
+                    {{ form_row(form._token, { 'label': false }) }}
                 </div>
             {% endfor %}
 
             <button type="submit" class="neon-button">
-                {{ registrationForm.vars.value.id is same as (null) ? 'Créér' : 'Modifier' }} un profil
+                {{ registrationForm.vars.value.id is same as (null) ? 'Créér le' : 'Modifier votre' }} profil
             </button>
 
             {{ form_end(registrationForm) }}
@@ -37,8 +38,7 @@
 
 
         {% if registrationForm.vars.value.id %}
-                <a class="cancel-link" href="{{ path('user_list') }}" title="Liste des Utilisateurs">Annuler</a>
-            {% endif %}
-        </div>
+                <a class="cancel-link" href="{{ path('main_home') }}" title="Accueil">Annuler la modification</a>
+        {% endif %}
     </div>
 {% endblock %}
