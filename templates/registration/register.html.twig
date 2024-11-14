@@ -22,10 +22,11 @@
 
             {% for field in registrationForm %}
                 <div class="form-group">
-                    {{ form_label(field, null, {'label_attr': {'class': 'form-label neon-text'}}) }}
+                    {% if field.vars.name != '_token' %}
+                        {{ form_label(field, null, {'label_attr': {'class': 'form-label neon-text'}}) }}
+                    {% endif %}
                     {{ form_widget(field, {'attr': {'class': 'form-input neon-input'}}) }}
-                    {{ form_errors(field) }}
-                    {{ form_row(form._token, { 'label': false }) }}
+                    {{ form_errors(field, {'error_attr': {'class': 'text-white'}}) }}
                 </div>
             {% endfor %}
 

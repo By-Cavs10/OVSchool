@@ -221,8 +221,6 @@ body {
 
 /* Style quand le champ est en focus */
 .neon-input:focus {
-    background-color: white; /* Fond blanc */
-    color: black; /* Texte noir */
     border-color: var(--color-neon-blue); /* Bordure passe au bleu néon */
     outline: none; /* Retirer le contour bleu par défaut */
 }
@@ -267,4 +265,14 @@ footer a:hover {
     padding: 10px;
 
 }
+
+.login-container{
+    margin-top: 5vh;
+    margin-bottom: 6vh;
+}
+
+.form-group ul li {
+    color: white;
+}
+
 

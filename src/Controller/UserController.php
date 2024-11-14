@@ -83,6 +83,11 @@ class UserController extends AbstractController
             // Hasher le password avant de le rentrer en BDD
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $user->setAdministrateur('false');
+                $user->setActif('true');
+            }
+
             //Définir le rôle
             $roles=['ROLE_USER'];
 

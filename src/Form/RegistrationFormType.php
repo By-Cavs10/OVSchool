@@ -8,7 +8,6 @@ use App\Repository\SiteRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,12 +16,15 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RegistrationFormType extends AbstractType
 {
+    public function __construct(private Security $security)
+    {}
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -97,8 +99,6 @@ class RegistrationFormType extends AbstractType
                 ]
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'label' => 'Mot de passe (*) :',
                 'mapped' => false,
                 'required' => false,
@@ -110,14 +110,11 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Votre mot de passe doit faire au minimum {{ limit }} caractères.',
-                        // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                 ],
             ])
             ->add('confirmPlainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'label' => 'Vérifier le mot de passe (*) :',
                 'mapped' => false,
                 'required' => false,
@@ -137,18 +134,20 @@ class RegistrationFormType extends AbstractType
                     // Ajoute une erreur de validation au champ de confirmation
                     $form->get('confirmPlainPassword')->addError(new FormError('Les mots de passe ne correspondent pas.'));
                 }
-            })
-            ->add('administrateur', CheckboxType::class, [
-                'label' => 'Statut Administrateur : ',
-                'data' => false,
-                'required'=> false,
-            ])
-            ->add('actif', CheckboxType::class, [
-                'label' => 'Compte actif : ',
-                'data' => true,
-                'required'=> false,
-            ])
-        ;
+            });
+            if ($this->security->isGranted('ROLE_ADMIN')) {
+                $builder
+                    ->add('administrateur', CheckboxType::class, [
+                        'label' => 'Statut Administrateur : ',
+                        'data' => false,
+                        'required'=> false,
+                    ])
+                    ->add('actif', CheckboxType::class, [
+                        'label' => 'Compte actif : ',
+                        'data' => true,
+                        'required'=> false,
+                    ]);
+            }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
