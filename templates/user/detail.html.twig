@@ -37,14 +37,16 @@
 
         <div class="button-group centrerText">
 
+            {% if app.user and (app.user == user or is_granted('ROLE_ADMIN')) %}
                 <button type="button" class="neon-button flex" onclick="window.location.href='{{ path('user_update', {'id': user.id}) }}'">Modifier le profil</button>
-            {% if app.user and is_granted('ROLE_ADMIN') %}
-                <button type="button" class="neon-button flex" onclick="window.location.href='{{ path('user_list') }}'">Liste Utilisateurs</button>
+                <form action="{{ path('user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')">
+                    <input type="hidden" name="token" value="{{ csrf_token('delete' ~ user.id) }}">
+                    <button type="submit" class="neon-button">Supprimer le profil</button>
+                </form>
+                {% if app.user and is_granted('ROLE_ADMIN') %}
+                    <button type="button" class="neon-button flex" onclick="window.location.href='{{ path('user_list') }}'">Liste Utilisateurs</button>
+                 {% endif %}
             {% endif %}
-            <form action="{{ path('user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')">
-                <input type="hidden" name="token" value="{{ csrf_token('delete' ~ user.id) }}">
-                <button type="submit" class="neon-button">Supprimer le profil</button>
-            </form>
         </div>
     </div>
 {% endblock %}

@@ -44,7 +44,7 @@
             <h2>Participants :</h2>
             <ul>
                 {% for user in sortie.participants %}
-                    <li>{{ user.nom }} {{ user.prenom }}</li>
+                    <li><a href="{{ path('user_detail', {'id': user.id}) }}">{{ user.nom }} {{ user.prenom }}</a></li>
                 {% else %}
                     <li>Aucun participant pour le moment</li>
                 {% endfor %}
